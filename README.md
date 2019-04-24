@@ -1,2 +1,8 @@
 # JAM-Agent
-JAM Agent from http://www.marcush.net/IRS/irs_downloads.html
+
+> General description - JAM supports both top-down, goal-based reasoning and bottom-up data-driven reasoning. JAM selects goals and plans based on maximal priority if metalevel plans are not available, or user-developed metalevel reasoning plans if they do exist. JAM's conceptualization of goals and goal achievement is more classically defined (UMPRS is more behavioral performance-based than truly goal-based) and makes the distinction between plans to achieve goals and plans that simply encode behaviors. Goal-types implemented include achievement (attain a specified world state), maintenance (re-attain a specified world state), and behavior performance. Execution of multiple simultaneous goals are supported, with suspension and resumption capabilities for each goal (i.e., intention) thread. JAM plans have explicit precondition and runtime attributes that restrict their applicability, a postcondition attribute, and a plan attributes section for specifying plan/domain-specific plan features. Available plan constructs include: sequencing, iteration, subgoaling, atomic (i.e., non-interruptable) plan segments, n-branch deterministic and non-deterministic conditional execution, parallel execution of multiple plan segments, goal-based or state-based synchronization, an explicit failure-handling section, and Java primitive function definition through explicit integration into JAM as well as the invocation and access of predefined (i.e., legacy) class methods and members via Java's reflection capabilities without having to do any explicit integration with JAM.
+
+## Links
+
+- Usage Manual: http://www.marcush.net/IRS/Jam/Jam-man-01Nov01-draft.htm
+- IRS Downloads including JAM Agent: http://www.marcush.net/IRS/irs_downloads.html
