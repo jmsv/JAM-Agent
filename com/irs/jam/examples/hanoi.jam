@@ -1,0 +1,76 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exG.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Solve the Tower of Hanoi game
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:16 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 7
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    PERFORM solve_hanoi 7 "Src" "Dst" "Aux";
+
+Plan: {
+
+NAME:   "Solve Towers of Hanoi"
+
+GOAL:   PERFORM solve_hanoi $DISCS $FROM $TO $SPARE;
+
+BODY:
+    WHEN : TEST ( != $DISCS 0 )
+        {
+            // move n-1 discs from source to spare
+	    PERFORM solve_hanoi (- $DISCS 1) $FROM $SPARE $TO;
+
+            // print to screen directions of next move
+            PERFORM move $FROM $TO;
+
+            // now move from spare to from
+            PERFORM solve_hanoi (- $DISCS 1) $SPARE $TO $FROM;
+        };
+FAILURE:
+        EXECUTE print "Plan failed for some reason.\n";
+}
+
+Plan: {
+
+NAME:   "Move from one pole to another"
+
+GOAL:   PERFORM move $FROM $TO;
+
+BODY:
+        // print to screen directions of move
+        EXECUTE print "Move from " $FROM " to " $TO "\n";
+}

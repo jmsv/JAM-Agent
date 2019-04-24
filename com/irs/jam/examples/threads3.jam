@@ -1,0 +1,148 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex4.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test many different aspects of JAM plans and
+//                      interpreter behavior.  Tests DO_ALL, DO_ANY, ATOMIC,
+//                      DO-WHILE, WHILE, WHEN, and PARALLEL constructs, and
+//                      subgoal failure and recovery through a "try-catch"
+//                      idiom using an OR construct.
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:43:07 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 29
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE JAM_test_done 3.0 :UTILITY (+ 1.1 2.2);
+
+FACTS:
+    FACT test_done "False";
+    FACT test_entry 1.0;
+    FACT value 33;
+    FACT initialized "False";
+    FACT cycle_num  0;
+
+Plan: {
+NAME:
+    "Test JAM"
+GOAL:
+    ACHIEVE JAM_test_done $VALUE;
+CONTEXT:
+    FACT test_done "False";
+UTILITY: (+ 100 3.0 1.4);
+
+BODY:
+    PARALLEL
+    {
+        EXECUTE println "Thread 0, action 1.";
+        EXECUTE println "Thread 0, action 2.";
+        EXECUTE println "Thread 0, action 3.";
+	/*
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "Thread 0 within DO-WHILE action " $count1;
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 10);
+	*/
+        EXECUTE println "Thread 0, action 4.";
+        EXECUTE println "Thread 0, action 5.";
+        EXECUTE println "Thread 0, action 6.";
+        EXECUTE println "Thread 0, action 7.";
+    }
+    {
+        EXECUTE println "Thread 1, action 1.";
+        EXECUTE println "Thread 1, action 2.";
+        EXECUTE println "Thread 1, action 3.";
+	/*
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "Thread 1 within DO-WHILE action " $count1;
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 10);
+	*/
+        EXECUTE println "Thread 1, action 4.";
+        EXECUTE println "Thread 1, action 5.";
+        EXECUTE println "Thread 1, action 6.";
+        EXECUTE println "Thread 1, action 7.";
+    }
+    {
+        EXECUTE println "Thread 2, action 1.";
+        EXECUTE println "Thread 2, action 2.";
+        EXECUTE println "Thread 2, action 3.";
+	/*
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "Thread 2 within DO-WHILE action " $count1;
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 10);
+	*/
+        EXECUTE println "Thread 2, action 4.";
+        EXECUTE println "Thread 2, action 5.";
+        EXECUTE println "Thread 2, action 6.";
+        EXECUTE println "Thread 2, action 7.";
+    }
+    {
+        EXECUTE println "Thread 3, action 1.";
+        EXECUTE println "Thread 3, action 2.";
+        EXECUTE println "Thread 3, action 3.";
+	/*
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "Thread 3 within DO-WHILE action " $count1;
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 10);
+	*/
+        EXECUTE println "Thread 3, action 4.";
+        EXECUTE println "Thread 3, action 5.";
+        EXECUTE println "Thread 3, action 6.";
+        EXECUTE println "Thread 3, action 7.";
+    }
+    {
+        EXECUTE println "Thread 4, action 1.";
+        EXECUTE println "Thread 4, action 2.";
+	EXECUTE sleep 3000;
+        //EXECUTE println "Thread 4, action 3.";
+	/*
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "Thread 4 within DO-WHILE action " $count1;
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 10);
+	*/
+        EXECUTE println "Thread 4, action 4.";
+        EXECUTE println "Thread 4, action 5.";
+        EXECUTE println "Thread 4, action 6.";
+        EXECUTE println "Thread 4, action 7.";
+    };
+}

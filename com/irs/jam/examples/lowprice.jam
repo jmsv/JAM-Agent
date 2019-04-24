@@ -1,0 +1,98 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exG.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Demonstrate goal & world model matching routine
+//                      during Applicable Plan List generation
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:16 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 7
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+FACTS:
+    FACT cost 1  250.0;
+    FACT cost 22  50.0;
+    FACT cost 3  350.0;
+    FACT cost 6  500.0;
+
+    //a very high value initially expected and as the agent
+    //finds other alternatives, it is updated
+    FACT expectedCost 1000.0; 
+
+//FACT cheapestProduct -1;
+
+GOALS:
+    ACHIEVE shop_done;
+    
+PLAN: {
+    NAME: "go shopping"
+    GOAL:
+        ACHIEVE shop_done;
+    BODY:
+	ACHIEVE find_cheapest $Price;
+    FAILURE:
+    EXECUTE println "shop failed";
+}
+
+PLAN: {
+    NAME: "find cheapest price"
+    GOAL:
+        ACHIEVE find_cheapest $Price;
+    PRECONDITION:
+        (< $Price $PriceXptd);
+    CONTEXT:
+        FACT cost $ProductID $Price;
+        RETRIEVE expectedCost $PriceXptd;
+    BODY:
+        EXECUTE println "Found price of " $Price;
+        UPDATE (cheapestProduct) (cheapestProduct $ProductID);
+        UPDATE (expectedCost) (expectedCost $Price);
+        ACHIEVE find_cheapest $Price;
+    UTILITY:
+        10; //any value just to ensure it will always be 
+            //selected first (while context holds)
+    FAILURE:
+	EXECUTE println "cheapest failed";
+}
+
+PLAN: {
+    NAME:
+        "keep the instantiation for the cheapest price"
+    GOAL:
+        ACHIEVE find_cheapest $Price;
+    BODY:
+        EXECUTE println "Absolutely cheapest price found was: " $Price; 
+    FAILURE:
+	EXECUTE println "cheapest2 failed";
+}

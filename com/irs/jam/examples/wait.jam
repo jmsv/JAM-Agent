@@ -1,0 +1,114 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exH.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test the two forms of the WAIT construct
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:13 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 3
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE wait_tested;
+    ACHIEVE waited_for_goal "True";
+
+FACTS:
+    FACT cycle_num  0;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+
+    RETRIEVE cycle_num $CYCLE_NUM;
+    EXECUTE print $CYCLE_NUM " ";
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+}
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Test WAIT construct"
+DOCUMENTATION:
+    "The first WAIT will hold suspend execution of the plan until the
+    indicated goal is achieved.  The second WAIT will hold execution
+    until the TEST is successful."
+GOAL:
+    ACHIEVE wait_tested;
+CONTEXT:
+    RETRIEVE cycle_num $CYCLE_NUM;
+BODY:
+    EXECUTE print "\nAction before goal WAIT.\n";
+    WAIT waited_for_goal "True";
+    EXECUTE print "\nAction after goal WAIT.\n";
+    EXECUTE print "\nAction before condition WAIT.\n\n";
+    WAIT : TEST (== $CYCLE_NUM 300);
+    EXECUTE print "\n\nAction after condition WAIT.\n";
+
+UTILITY: 0;
+}
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Achieve WAITed for goal"
+DOCUMENTATION:
+    "The plan's utility will gradually increase until it finally
+    outranks the other plan.  It will then be achieved and since it is
+    an ACHIEVE goal, the appropriate WM entry will be ASSERTed."
+GOAL:
+    ACHIEVE waited_for_goal $STRING;
+CONTEXT:
+    RETRIEVE cycle_num $CYCLE_NUM;
+BODY:
+    EXECUTE print "\n\nAchieving WAITed for goal.\n\n";
+
+UTILITY: (- $CYCLE_NUM 100);
+}
+

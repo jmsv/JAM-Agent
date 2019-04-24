@@ -1,0 +1,337 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex4.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test many different aspects of JAM plans and
+//                      interpreter behavior.  Tests DO_ALL, DO_ANY, ATOMIC,
+//                      DO-WHILE, WHILE, WHEN, and PARALLEL constructs, and
+//                      subgoal failure and recovery through a "try-catch"
+//                      idiom using an OR construct.
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:43:07 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE test_doall;
+    ACHIEVE test_doany;
+
+    ACHIEVE fail_test;
+    ACHIEVE goal_test1;
+    ACHIEVE goal_test2;
+    ACHIEVE JAM_test_done 3.0 :UTILITY (+ 1.1 2.2);
+
+FACTS:
+    FACT test_done "False";
+    FACT test_entry 1.0;
+    FACT value 33;
+    FACT initialized "False";
+    FACT cycle_num  0;
+
+OBSERVER:
+{
+    RETRIEVE cycle_num $CYCLE_NUM;
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+    EXECUTE println "Cycle number " $CYCLE_NUM;
+
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+Plan: {
+NAME:
+    "Test JAM"
+GOAL:
+    ACHIEVE JAM_test_done $VALUE;
+CONTEXT:
+    FACT test_done "False";
+UTILITY: (+ 100 3.0 1.4);
+
+BODY:
+    PARALLEL
+    {
+        EXECUTE println "First thread 1.";
+        EXECUTE println "First thread 2.";
+        EXECUTE println "First thread 3.";
+	ASSIGN $count1 0;
+	DO {
+	    EXECUTE println "First thread within DO-WHILE.";
+	    ASSIGN $count1 (+ $count1 1);
+	} WHILE : TEST (< $count1 5);
+        EXECUTE println "First thread 5.";
+        EXECUTE println "First thread 6.";
+        EXECUTE println "First thread 7.";
+        EXECUTE println "First thread 8.";
+    }
+    {
+        EXECUTE println "Second thread 1.";
+        EXECUTE println "Second thread 2.";
+        EXECUTE println "Second thread 3.";
+        EXECUTE println "Second thread 4.";
+        EXECUTE println "Second thread 5.";
+        EXECUTE println "Second thread 6.";
+        EXECUTE println "Second thread 7.";
+	ASSIGN $count2 0;
+	DO {
+	    EXECUTE println "Second thread within DO-WHILE.";
+	    ASSIGN $count2 (+ $count2 1);
+	} WHILE : TEST (< $count2 5);
+    }
+    {
+        EXECUTE println "Third thread 1.";
+	ASSIGN $count3 0;
+	DO {
+	    EXECUTE println "Third thread within DO-WHILE.";
+	    ASSIGN $count3 (+ $count3 1);
+	} WHILE : TEST (< $count3 5);
+        EXECUTE println "Third thread 2.";
+        EXECUTE println "Third thread 3.";
+        EXECUTE println "Third thread 4.";
+        EXECUTE println "Third thread 5.";
+    };
+
+    EXECUTE printIntentionStructure;
+    EXECUTE print "First value = " $VALUE "\n";
+    ASSIGN $VALUE 99;
+    EXECUTE print "Now value = " $VALUE "\n";
+    ASSERT value $VALUE;
+    RETRIEVE value $NEWVALUE;
+    EXECUTE print "New value = " $NEWVALUE "\n";
+
+    ASSERT test_wm "AAAA" 1.0 3;
+    EXECUTE printWorldModel;
+
+    ACHIEVE first_level_subgoal $NEWVALUE;
+
+    ASSIGN $VALUE (- $VALUE 1);
+    EXECUTE print "Now value = " $VALUE "\n";
+
+    WHEN : TEST (== $VALUE 98) {
+	EXECUTE print "\n\nInside WHEN.\n\n\n";
+    };
+
+    OR
+    {
+	EXECUTE print "Before TEST.\n";
+	TEST (== $VALUE 98);
+	EXECUTE print "After TEST.\n";
+    }
+    {
+	EXECUTE print "Second branch.\n";
+    };
+
+    ASSIGN $VALUE 5;
+    EXECUTE print "Before WHILE\n";
+    WHILE : TEST (!= $VALUE 0)
+    {
+	EXECUTE print $VALUE "\n";
+	ASSIGN $VALUE (- $VALUE 1);
+    };
+
+    EXECUTE print "Before DO\n";
+    DO {
+	EXECUTE print $VALUE "\n";
+	ASSIGN $VALUE (+ $VALUE 1);
+    } WHILE : TEST (!= $VALUE 5);
+
+}
+
+Plan: {
+NAME:
+    "Test subgoaling - simple"
+GOAL:
+    ACHIEVE first_level_subgoal $NEWVALUE;
+UTILITY: 100;
+BODY:
+    EXECUTE print "High utility subgoal.\n";
+}
+
+Plan: {
+NAME:
+    "Test subgoaling"
+GOAL:
+    ACHIEVE first_level_subgoal $NEWVALUE;
+UTILITY: 50;
+BODY:
+    ATOMIC {
+    	EXECUTE print "New Value = " $NEWVALUE "\n";
+    	EXECUTE print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+    	EXECUTE print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+    };
+    ACHIEVE second_level_subgoal;
+    ASSERT test_wm "BBBB" 2.0 6;
+    EXECUTE printWorldModel;
+
+    OR
+    {
+	EXECUTE print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+	EXECUTE print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+	EXECUTE fail;
+	EXECUTE print "cccccccccccccccccccccccccccccccccccccccc\n";
+    }
+    {
+	EXECUTE print "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n";
+	EXECUTE print "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n";
+	EXECUTE print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n";
+    };
+}
+
+Plan: {
+NAME:
+    "Test deeper subgoaling"
+GOAL:
+    ACHIEVE second_level_subgoal;
+
+BODY:
+    ASSERT test_wm "CCCC" 3.0 9;
+    EXECUTE printWorldModel;
+}
+
+
+Plan: {
+NAME:
+    "Test plan competition"
+GOAL:
+    ACHIEVE goal_test1;
+CONTEXT:
+    RETRIEVE value $VALUE;
+UTILITY: $VALUE;
+BODY:
+    EXECUTE print "First plan of goal_test1.\n";
+    EXECUTE print "First plan of goal_test1.\n";
+    UPDATE (value) (value -33);
+    EXECUTE print "First plan of goal_test1.\n";
+    EXECUTE print "First plan of goal_test1.\n";
+    EXECUTE print "First plan of goal_test1.\n";
+}
+
+Plan: {
+NAME:
+    "Test plan/goal competition"
+GOAL:
+    ACHIEVE goal_test1;
+UTILITY: 10;
+BODY:
+    EXECUTE print "Second plan of goal_test1.\n";
+    EXECUTE print "Second plan of goal_test1.\n";
+    EXECUTE print "Second plan of goal_test1.\n";
+    EXECUTE print "Second plan of goal_test1.\n";
+}
+
+Plan: {
+NAME:
+    "Test plan/goal competition#2"
+GOAL:
+    ACHIEVE goal_test2;
+CONTEXT:
+    RETRIEVE value $VALUE;
+UTILITY: 15;
+BODY:
+    EXECUTE print "First plan of goal_test2.\n";
+    EXECUTE print "First plan of goal_test2.\n";
+    EXECUTE print "First plan of goal_test2.\n";
+    OR
+    {
+	ACHIEVE fail_test;
+    }
+    {
+	EXECUTE print "\"Caught\" failure of subgoal fail_test!\n";
+    };
+
+    EXECUTE print "First plan of goal_test2.\n";
+
+FAILURE:
+    EXECUTE print "\n\nFailure section of plan for goal_test2.\n\n";
+}
+
+Plan: {
+NAME:
+    "Test plan failure"
+GOAL:
+    ACHIEVE fail_test;
+BODY:
+    EXECUTE print "First action of failure plan of goal_test2.\n";
+    EXECUTE print "Second action of failure plan of goal_test2.\n";
+    FAIL;
+    EXECUTE print "Third action of failure plan of goal_test2.\n";
+FAILURE:
+    EXECUTE print "\n\nFailure section of plan for fail_test.\n\n";
+}
+
+Plan: {
+NAME:
+    "Test DO_ANY"
+GOAL:
+    ACHIEVE test_doany;
+BODY:
+    DO_ANY
+    {
+	EXECUTE print "First branch of DO_ANY.\n";
+    }
+    {
+	EXECUTE print "Second branch of DO_ANY.\n";
+    }
+    {
+	EXECUTE print "Third branch of DO_ANY.\n";
+    };
+    EXECUTE print "After DO_ANY.\n";
+}
+
+Plan: {
+NAME:
+    "Test DO_ALL"
+GOAL:
+    ACHIEVE test_doall;
+BODY:
+    DO_ALL
+    {
+	EXECUTE print "First branch of DO_ALL.\n";
+    }
+    {
+	EXECUTE print "Second branch of DO_ALL.\n";
+    }
+    {
+	EXECUTE print "Third branch of DO_ALL.\n";
+    };
+    EXECUTE print "After DO_ALL.\n";
+}
+

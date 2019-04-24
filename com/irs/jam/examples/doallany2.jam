@@ -1,0 +1,145 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exF.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test DO_ANY and DO_ALL actions
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:20 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 4
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE JAM_test_done;
+
+FACTS:
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+
+Plan: {
+NAME:
+	"Test Jam's DO_ANY and DO_ALL constructs"
+GOAL:
+	ACHIEVE JAM_test_done;
+CONTEXT:
+
+BODY:
+    EXECUTE print "Line A.\n";
+
+    DO_ANY
+    {
+	EXECUTE print "ANY Branch 0 will fail.\n";
+	FAIL;
+    }
+    {
+	EXECUTE print "ANY Branch 1 will fail.\n";
+	FAIL;
+    }
+    {
+	EXECUTE print "ANY Branch 2 will fail.\n";
+	FAIL;
+    }
+    {
+	EXECUTE print "ANY Branch 3 will fail.\n";
+	FAIL;
+    }
+    {
+	EXECUTE print "ANY Branch 4.\n";
+    }
+    {
+	EXECUTE print "ANY Branch 5 will fail.\n";
+	FAIL;
+    }
+    {
+	EXECUTE print "ANY Branch 6 will fail.\n";
+	FAIL;
+    };
+
+    ASSIGN $TRY_BRANCH 0;
+    DO
+    {
+	OR
+	{
+	    DO_ALL
+	    {
+		EXECUTE print "ALL Branch 0.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 1.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 2.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 3.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 4.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 5.\n";
+	    }
+	    {
+		EXECUTE print "ALL Branch 6 will fail.\n";
+		FAIL;
+	    };
+	}
+	{
+	    ASSIGN $TRY_BRANCH (+ $TRY_BRANCH 1);
+	    EXECUTE print "DO_ALL construct failed " $TRY_BRANCH " times.\n";
+	};
+    } WHILE : TEST (!= $TRY_BRANCH 5);
+
+
+    EXECUTE print "Line Z.\n";
+
+
+
+FAILURE:
+    EXECUTE print "\nTop-level plan failed!\n";
+}
+

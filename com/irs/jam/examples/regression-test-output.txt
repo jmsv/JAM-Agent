@@ -1,0 +1,2397 @@
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM basic.jam 
+Interpreter::parse: Building interpreter from: basic.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+goal1:0	9	8	7	6	9	8	7	6	
+goal1:1	9	8	7	6	9	8	7	6	
+goal1:2	9	8	7	6	9	8	7	6	
+goal1:3	9	8	7	6	9	8	7	6	
+goal1:4	9	8	7	6	9	8	7	6	
+goal1:5	9	8	7	6	9	8	7	6	
+goal1: Done with loop
+goal1:6	5	4	3	2	1	First
+Second
+goal1
+goal1+Third
+
+JAM
+Hello
+there.
+This is
+a test.
+A branch.
+Another branch.
+
+goal2:0	9	8	7	6	9	8	7	6	
+goal2:1	9	8	7	6	9	8	7	6	
+goal2:2	9	8	7	6	9	8	7	6	
+goal2:3	9	8	7	6	9	8	7	6	
+goal2:4	9	8	7	6	9	8	7	6	
+goal2:5	9	8	7	6	9	8	7	6	
+goal2: Done with loop
+goal2:6	5	4	3	2	1	goal2
+goal2+Third
+
+JAM
+A branch.
+Another branch.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	337
+  Number of Null APLs:		322
+  Number of Goals established:	15
+  Number of interpreter cycles:	322
+
+  APL generation time:		0.02 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.05 seconds.
+  Observer execution time:	0.02 seconds.
+  Total run time:		0.11 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM blocks-world.jam 
+Interpreter::parse: Building interpreter from: blocks-world.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Goal is Block1 on Block2 on Block2 on Table.
+World Model at start is:
+JAM:Agent's World Model (9 entries) is now:
+0:[ ] : ON Block5, Block4
+1:[ ] : ON Block4, Block3
+2:[ ] : ON Block1, Block2
+3:[ ] : ON Block2, Table
+4:[ ] : ON Block3, Table
+5:[ ] : CLEAR Block1
+6:[ ] : CLEAR Block5
+7:[ ] : CLEAR Table
+8:[ ] : initialized False
+ACHIEVEing Block3 on Table.
+ACHIEVEing Block2 on Block3.
+Making sure Block2 is clear (ACHIEVEing it).
+Clearing Block1 from on top of Block2
+Moving Block1 to table.
+Making sure Block1 is clear (ACHIEVEing it).
+Making sure Table is clear (ACHIEVEing it).
+Both objects now clear.  Moving Block1 on top of Table.
+
+    Performing low-level move action of Block1 to Table.
+    move: Retracting ON Block1 Block2
+    move: Asserting CLEAR Block2
+    move: Asserting ON Block1 Table
+
+CLEAR: Retracting ON Block1 Block2
+Making sure Block3 is clear (ACHIEVEing it).
+Clearing Block4 from on top of Block3
+Moving Block4 to table.
+Making sure Block4 is clear (ACHIEVEing it).
+Clearing Block5 from on top of Block4
+Moving Block5 to table.
+Making sure Block5 is clear (ACHIEVEing it).
+Making sure Table is clear (ACHIEVEing it).
+Both objects now clear.  Moving Block5 on top of Table.
+
+    Performing low-level move action of Block5 to Table.
+    move: Retracting ON Block5 Block4
+    move: Asserting CLEAR Block4
+    move: Asserting ON Block5 Table
+
+CLEAR: Retracting ON Block5 Block4
+Making sure Table is clear (ACHIEVEing it).
+Both objects now clear.  Moving Block4 on top of Table.
+
+    Performing low-level move action of Block4 to Table.
+    move: Retracting ON Block4 Block3
+    move: Asserting CLEAR Block3
+    move: Asserting ON Block4 Table
+
+CLEAR: Retracting ON Block4 Block3
+Both objects now clear.  Moving Block2 on top of Block3.
+
+    Performing low-level move action of Block2 to Block3.
+    Retracting CLEAR Block3
+    move: Retracting ON Block2 Table
+    move: Asserting CLEAR Table
+    move: Asserting ON Block2 Block3
+
+ACHIEVEing Block1 on Block2.
+Making sure Block1 is clear (ACHIEVEing it).
+Making sure Block2 is clear (ACHIEVEing it).
+Both objects now clear.  Moving Block1 on top of Block2.
+
+    Performing low-level move action of Block1 to Block2.
+    Retracting CLEAR Block2
+    move: Retracting ON Block1 Table
+    move: Asserting CLEAR Table
+    move: Asserting ON Block1 Block2
+
+World Model at end is:
+JAM:Agent's World Model (10 entries) is now:
+0:[ ] : ON Block5, Table
+1:[ ] : ON Block4, Table
+2:[ ] : CLEAR Block4
+3:[ ] : ON Block2, Block3
+4:[ ] : ON Block3, Table
+5:[ ] : CLEAR Block1
+6:[ ] : CLEAR Block5
+7:[ ] : CLEAR Table
+8:[ ] : initialized False
+9:[ ] : ON Block1, Block2
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	70
+  Number of Null APLs:		56
+  Number of Goals established:	14
+  Number of interpreter cycles:	56
+
+  APL generation time:		0.02 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.03 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.05 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM conclude.jam 
+Interpreter::parse: Building interpreter from: conclude.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 2
+
+Stack#0
+  Goal   	: printing_done "goal1" 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+Stack#1
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (7 entries) is now:
+0:[N] : communicated a, 1, 2.0
+1:[N] : cycle_num 1
+2:[N] : lastTime 1004309514532
+3:[N] : initialized False
+4:[N] : test_done False
+5:[N] : count 0
+6:[N] : goal_resets 1
+
+
+Restoring MAINTAIN state, step 1!
+Restoring MAINTAIN state, step 2!
+Restoring MAINTAIN state, step 3!
+
+
+Achieving goal state of:
+goal_test 2.2 "Two" 2
+Achieving goal state, step 2!
+Restoring MAINTAIN state, step 4!
+Restoring MAINTAIN state, step 5!
+Restoring MAINTAIN state, step 6!
+
+goal1:0	9	8	7	6	9	8	7	6	
+goal1:1	9	8	7	6	9	8	7	6	
+goal1:2	9	8	7	6	9	8	7	6	
+goal1:3	9	8	7	6	9	8	7	6	
+goal1:4	9	8	7	6	9	8	7	6	
+goal1:5	9	8	7	6	9	8	7	6	
+goal1: Done with loop
+goal1:6	5	4	3	2	1	First
+Second
+goal1
+goal1+Third
+
+JAM
+Hello
+there.
+This is
+a test.
+A branch.
+Another branch.
+
+Performing data-driven activity at cycle number 1000!
+Performing data-driven activity at cycle number 1001!
+Performing data-driven activity at cycle number 1002!
+Performing data-driven activity at cycle number 1003!
+Performing data-driven activity at cycle number 1004!
+Performing data-driven activity at cycle number 1005!
+Performing data-driven activity at cycle number 1006!
+Performing data-driven activity at cycle number 1007!
+Performing data-driven activity at cycle number 1008!
+Performing data-driven activity at cycle number 1009!
+Performing data-driven activity at cycle number 1010!
+Performing data-driven activity at cycle number 1011!
+Performing data-driven activity at cycle number 1012!
+
+Performing data-driven activity at cycle number 2000!
+Performing data-driven activity at cycle number 2001!
+Performing data-driven activity at cycle number 2002!
+Performing data-driven activity at cycle number 2003!
+Performing data-driven activity at cycle number 2004!
+Performing data-driven activity at cycle number 2005!
+Performing data-driven activity at cycle number 2006!
+Performing data-driven activity at cycle number 2007!
+Performing data-driven activity at cycle number 2008!
+Performing data-driven activity at cycle number 2009!
+Performing data-driven activity at cycle number 2010!
+Performing data-driven activity at cycle number 2011!
+Performing data-driven activity at cycle number 2012!
+
+Performing data-driven activity at cycle number 3000!
+Performing data-driven activity at cycle number 3001!
+Performing data-driven activity at cycle number 3002!
+Performing data-driven activity at cycle number 3003!
+Performing data-driven activity at cycle number 3004!
+Performing data-driven activity at cycle number 3005!
+Performing data-driven activity at cycle number 3006!
+Performing data-driven activity at cycle number 3007!
+Performing data-driven activity at cycle number 3008!
+Performing data-driven activity at cycle number 3009!
+Performing data-driven activity at cycle number 3010!
+Performing data-driven activity at cycle number 3011!
+Performing data-driven activity at cycle number 3012!
+
+Performing data-driven activity at cycle number 4000!
+Performing data-driven activity at cycle number 4001!
+Performing data-driven activity at cycle number 4002!
+Performing data-driven activity at cycle number 4003!
+Performing data-driven activity at cycle number 4004!
+Performing data-driven activity at cycle number 4005!
+Performing data-driven activity at cycle number 4006!
+Performing data-driven activity at cycle number 4007!
+Performing data-driven activity at cycle number 4008!
+Performing data-driven activity at cycle number 4009!
+Performing data-driven activity at cycle number 4010!
+Performing data-driven activity at cycle number 4011!
+Performing data-driven activity at cycle number 4012!
+
+Performing data-driven activity at cycle number 5000!
+Performing data-driven activity at cycle number 5001!
+Performing data-driven activity at cycle number 5002!
+Performing data-driven activity at cycle number 5003!
+Performing data-driven activity at cycle number 5004!
+Performing data-driven activity at cycle number 5005!
+Performing data-driven activity at cycle number 5006!
+Performing data-driven activity at cycle number 5007!
+Performing data-driven activity at cycle number 5008!
+Performing data-driven activity at cycle number 5009!
+Performing data-driven activity at cycle number 5010!
+Performing data-driven activity at cycle number 5011!
+Performing data-driven activity at cycle number 5012!
+
+Performing data-driven activity at cycle number 6000!
+Performing data-driven activity at cycle number 6001!
+Performing data-driven activity at cycle number 6002!
+Performing data-driven activity at cycle number 6003!
+Performing data-driven activity at cycle number 6004!
+Performing data-driven activity at cycle number 6005!
+Performing data-driven activity at cycle number 6006!
+Performing data-driven activity at cycle number 6007!
+Performing data-driven activity at cycle number 6008!
+Performing data-driven activity at cycle number 6009!
+Performing data-driven activity at cycle number 6010!
+Performing data-driven activity at cycle number 6011!
+Performing data-driven activity at cycle number 6012!
+
+Performing data-driven activity at cycle number 7000!
+Performing data-driven activity at cycle number 7001!
+Performing data-driven activity at cycle number 7002!
+Performing data-driven activity at cycle number 7003!
+Performing data-driven activity at cycle number 7004!
+Performing data-driven activity at cycle number 7005!
+Performing data-driven activity at cycle number 7006!
+Performing data-driven activity at cycle number 7007!
+Performing data-driven activity at cycle number 7008!
+Performing data-driven activity at cycle number 7009!
+Performing data-driven activity at cycle number 7010!
+Performing data-driven activity at cycle number 7011!
+Performing data-driven activity at cycle number 7012!
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (19 entries) is now:
+0:[ ] : communicated a, 1, 2.0
+1:[N] : lastTime 1004309515533
+2:[ ] : printing_done goal1
+3:[ ] : initialized False
+4:[ ] : test_done False
+5:[ ] : count 0
+6:[ ] : achieve_goal 2.2, Two, 2
+7:[N] : cycle_num 7431
+8:[ ] : communicated First
+9:[ ] : communicated Second
+10:[ ] : indirect_communicated Second
+11:[ ] : communicated goal1
+12:[ ] : communicated goal1+Third
+13:[ ] : indirect_communicated goal1+Third
+14:[ ] : communicated Hello
+15:[ ] : communicated there.
+16:[ ] : communicated This is
+17:[ ] : communicated a test.
+18:[N] : goal_resets 2
+
+
+Restoring MAINTAIN state, step 1!
+Restoring MAINTAIN state, step 2!
+Restoring MAINTAIN state, step 3!
+Restoring MAINTAIN state, step 4!
+Restoring MAINTAIN state, step 5!
+Restoring MAINTAIN state, step 6!
+
+Performing data-driven activity at cycle number 8000!
+Performing data-driven activity at cycle number 8001!
+Performing data-driven activity at cycle number 8002!
+Performing data-driven activity at cycle number 8003!
+Performing data-driven activity at cycle number 8004!
+Performing data-driven activity at cycle number 8005!
+Performing data-driven activity at cycle number 8006!
+Performing data-driven activity at cycle number 8007!
+Performing data-driven activity at cycle number 8008!
+Performing data-driven activity at cycle number 8009!
+Performing data-driven activity at cycle number 8010!
+Performing data-driven activity at cycle number 8011!
+Performing data-driven activity at cycle number 8012!
+
+Performing data-driven activity at cycle number 9000!
+Performing data-driven activity at cycle number 9001!
+Performing data-driven activity at cycle number 9002!
+Performing data-driven activity at cycle number 9003!
+Performing data-driven activity at cycle number 9004!
+Performing data-driven activity at cycle number 9005!
+Performing data-driven activity at cycle number 9006!
+Performing data-driven activity at cycle number 9007!
+Performing data-driven activity at cycle number 9008!
+Performing data-driven activity at cycle number 9009!
+Performing data-driven activity at cycle number 9010!
+Performing data-driven activity at cycle number 9011!
+Performing data-driven activity at cycle number 9012!
+
+Performing data-driven activity at cycle number 10000!
+Performing data-driven activity at cycle number 10001!
+Performing data-driven activity at cycle number 10002!
+Performing data-driven activity at cycle number 10003!
+Performing data-driven activity at cycle number 10004!
+Performing data-driven activity at cycle number 10005!
+Performing data-driven activity at cycle number 10006!
+Performing data-driven activity at cycle number 10007!
+Performing data-driven activity at cycle number 10008!
+Performing data-driven activity at cycle number 10009!
+Performing data-driven activity at cycle number 10010!
+Performing data-driven activity at cycle number 10011!
+Performing data-driven activity at cycle number 10012!
+
+Performing data-driven activity at cycle number 11000!
+Performing data-driven activity at cycle number 11001!
+Performing data-driven activity at cycle number 11002!
+Performing data-driven activity at cycle number 11003!
+Performing data-driven activity at cycle number 11004!
+Performing data-driven activity at cycle number 11005!
+Performing data-driven activity at cycle number 11006!
+Performing data-driven activity at cycle number 11007!
+Performing data-driven activity at cycle number 11008!
+Performing data-driven activity at cycle number 11009!
+Performing data-driven activity at cycle number 11010!
+Performing data-driven activity at cycle number 11011!
+Performing data-driven activity at cycle number 11012!
+
+Performing data-driven activity at cycle number 12000!
+Performing data-driven activity at cycle number 12001!
+Performing data-driven activity at cycle number 12002!
+Performing data-driven activity at cycle number 12003!
+Performing data-driven activity at cycle number 12004!
+Performing data-driven activity at cycle number 12005!
+Performing data-driven activity at cycle number 12006!
+Performing data-driven activity at cycle number 12007!
+Performing data-driven activity at cycle number 12008!
+Performing data-driven activity at cycle number 12009!
+Performing data-driven activity at cycle number 12010!
+Performing data-driven activity at cycle number 12011!
+Performing data-driven activity at cycle number 12012!
+
+Performing data-driven activity at cycle number 13000!
+Performing data-driven activity at cycle number 13001!
+Performing data-driven activity at cycle number 13002!
+Performing data-driven activity at cycle number 13003!
+Performing data-driven activity at cycle number 13004!
+Performing data-driven activity at cycle number 13005!
+Performing data-driven activity at cycle number 13006!
+Performing data-driven activity at cycle number 13007!
+Performing data-driven activity at cycle number 13008!
+Performing data-driven activity at cycle number 13009!
+Performing data-driven activity at cycle number 13010!
+Performing data-driven activity at cycle number 13011!
+Performing data-driven activity at cycle number 13012!
+
+Performing data-driven activity at cycle number 14000!
+Performing data-driven activity at cycle number 14001!
+Performing data-driven activity at cycle number 14002!
+Performing data-driven activity at cycle number 14003!
+Performing data-driven activity at cycle number 14004!
+Performing data-driven activity at cycle number 14005!
+Performing data-driven activity at cycle number 14006!
+Performing data-driven activity at cycle number 14007!
+Performing data-driven activity at cycle number 14008!
+Performing data-driven activity at cycle number 14009!
+Performing data-driven activity at cycle number 14010!
+Performing data-driven activity at cycle number 14011!
+Performing data-driven activity at cycle number 14012!
+
+Performing data-driven activity at cycle number 15000!
+Performing data-driven activity at cycle number 15001!
+Performing data-driven activity at cycle number 15002!
+Performing data-driven activity at cycle number 15003!
+Performing data-driven activity at cycle number 15004!
+Performing data-driven activity at cycle number 15005!
+Performing data-driven activity at cycle number 15006!
+Performing data-driven activity at cycle number 15007!
+Performing data-driven activity at cycle number 15008!
+Performing data-driven activity at cycle number 15009!
+Performing data-driven activity at cycle number 15010!
+Performing data-driven activity at cycle number 15011!
+Performing data-driven activity at cycle number 15012!
+
+Performing data-driven activity at cycle number 16000!
+Performing data-driven activity at cycle number 16001!
+Performing data-driven activity at cycle number 16002!
+Performing data-driven activity at cycle number 16003!
+Performing data-driven activity at cycle number 16004!
+Performing data-driven activity at cycle number 16005!
+Performing data-driven activity at cycle number 16006!
+Performing data-driven activity at cycle number 16007!
+Performing data-driven activity at cycle number 16008!
+Performing data-driven activity at cycle number 16009!
+Performing data-driven activity at cycle number 16010!
+Performing data-driven activity at cycle number 16011!
+Performing data-driven activity at cycle number 16012!
+
+Performing data-driven activity at cycle number 17000!
+Performing data-driven activity at cycle number 17001!
+Performing data-driven activity at cycle number 17002!
+Performing data-driven activity at cycle number 17003!
+Performing data-driven activity at cycle number 17004!
+Performing data-driven activity at cycle number 17005!
+Performing data-driven activity at cycle number 17006!
+Performing data-driven activity at cycle number 17007!
+Performing data-driven activity at cycle number 17008!
+Performing data-driven activity at cycle number 17009!
+Performing data-driven activity at cycle number 17010!
+Performing data-driven activity at cycle number 17011!
+Performing data-driven activity at cycle number 17012!
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (19 entries) is now:
+0:[ ] : communicated a, 1, 2.0
+1:[N] : cycle_num 17214
+2:[ ] : printing_done goal1
+3:[ ] : initialized False
+4:[ ] : test_done False
+5:[ ] : count 0
+6:[ ] : achieve_goal 2.2, Two, 2
+7:[N] : lastTime 1004309516535
+8:[ ] : communicated First
+9:[ ] : communicated Second
+10:[ ] : indirect_communicated Second
+11:[ ] : communicated goal1
+12:[ ] : communicated goal1+Third
+13:[ ] : indirect_communicated goal1+Third
+14:[ ] : communicated Hello
+15:[ ] : communicated there.
+16:[ ] : communicated This is
+17:[ ] : communicated a test.
+18:[N] : goal_resets 3
+
+
+Restoring MAINTAIN state, step 1!
+Restoring MAINTAIN state, step 2!
+Restoring MAINTAIN state, step 3!
+Restoring MAINTAIN state, step 4!
+Restoring MAINTAIN state, step 5!
+Restoring MAINTAIN state, step 6!
+
+Performing data-driven activity at cycle number 18000!
+Performing data-driven activity at cycle number 18001!
+Performing data-driven activity at cycle number 18002!
+Performing data-driven activity at cycle number 18003!
+Performing data-driven activity at cycle number 18004!
+Performing data-driven activity at cycle number 18005!
+Performing data-driven activity at cycle number 18006!
+Performing data-driven activity at cycle number 18007!
+Performing data-driven activity at cycle number 18008!
+Performing data-driven activity at cycle number 18009!
+Performing data-driven activity at cycle number 18010!
+Performing data-driven activity at cycle number 18011!
+Performing data-driven activity at cycle number 18012!
+
+Performing data-driven activity at cycle number 19000!
+Performing data-driven activity at cycle number 19001!
+Performing data-driven activity at cycle number 19002!
+Performing data-driven activity at cycle number 19003!
+Performing data-driven activity at cycle number 19004!
+Performing data-driven activity at cycle number 19005!
+Performing data-driven activity at cycle number 19006!
+Performing data-driven activity at cycle number 19007!
+Performing data-driven activity at cycle number 19008!
+Performing data-driven activity at cycle number 19009!
+Performing data-driven activity at cycle number 19010!
+Performing data-driven activity at cycle number 19011!
+Performing data-driven activity at cycle number 19012!
+
+Performing data-driven activity at cycle number 20000!
+Performing data-driven activity at cycle number 20001!
+Performing data-driven activity at cycle number 20002!
+Performing data-driven activity at cycle number 20003!
+Performing data-driven activity at cycle number 20004!
+Performing data-driven activity at cycle number 20005!
+Performing data-driven activity at cycle number 20006!
+Performing data-driven activity at cycle number 20007!
+Performing data-driven activity at cycle number 20008!
+Performing data-driven activity at cycle number 20009!
+Performing data-driven activity at cycle number 20010!
+Performing data-driven activity at cycle number 20011!
+Performing data-driven activity at cycle number 20012!
+
+Performing data-driven activity at cycle number 21000!
+Performing data-driven activity at cycle number 21001!
+Performing data-driven activity at cycle number 21002!
+Performing data-driven activity at cycle number 21003!
+Performing data-driven activity at cycle number 21004!
+Performing data-driven activity at cycle number 21005!
+Performing data-driven activity at cycle number 21006!
+Performing data-driven activity at cycle number 21007!
+Performing data-driven activity at cycle number 21008!
+Performing data-driven activity at cycle number 21009!
+Performing data-driven activity at cycle number 21010!
+Performing data-driven activity at cycle number 21011!
+Performing data-driven activity at cycle number 21012!
+
+Performing data-driven activity at cycle number 22000!
+Performing data-driven activity at cycle number 22001!
+Performing data-driven activity at cycle number 22002!
+Performing data-driven activity at cycle number 22003!
+Performing data-driven activity at cycle number 22004!
+Performing data-driven activity at cycle number 22005!
+Performing data-driven activity at cycle number 22006!
+Performing data-driven activity at cycle number 22007!
+Performing data-driven activity at cycle number 22008!
+Performing data-driven activity at cycle number 22009!
+Performing data-driven activity at cycle number 22010!
+Performing data-driven activity at cycle number 22011!
+Performing data-driven activity at cycle number 22012!
+
+Performing data-driven activity at cycle number 23000!
+Performing data-driven activity at cycle number 23001!
+Performing data-driven activity at cycle number 23002!
+Performing data-driven activity at cycle number 23003!
+Performing data-driven activity at cycle number 23004!
+Performing data-driven activity at cycle number 23005!
+Performing data-driven activity at cycle number 23006!
+Performing data-driven activity at cycle number 23007!
+Performing data-driven activity at cycle number 23008!
+Performing data-driven activity at cycle number 23009!
+Performing data-driven activity at cycle number 23010!
+Performing data-driven activity at cycle number 23011!
+Performing data-driven activity at cycle number 23012!
+
+Performing data-driven activity at cycle number 24000!
+Performing data-driven activity at cycle number 24001!
+Performing data-driven activity at cycle number 24002!
+Performing data-driven activity at cycle number 24003!
+Performing data-driven activity at cycle number 24004!
+Performing data-driven activity at cycle number 24005!
+Performing data-driven activity at cycle number 24006!
+Performing data-driven activity at cycle number 24007!
+Performing data-driven activity at cycle number 24008!
+Performing data-driven activity at cycle number 24009!
+Performing data-driven activity at cycle number 24010!
+Performing data-driven activity at cycle number 24011!
+Performing data-driven activity at cycle number 24012!
+
+Performing data-driven activity at cycle number 25000!
+Performing data-driven activity at cycle number 25001!
+Performing data-driven activity at cycle number 25002!
+Performing data-driven activity at cycle number 25003!
+Performing data-driven activity at cycle number 25004!
+Performing data-driven activity at cycle number 25005!
+Performing data-driven activity at cycle number 25006!
+Performing data-driven activity at cycle number 25007!
+Performing data-driven activity at cycle number 25008!
+Performing data-driven activity at cycle number 25009!
+Performing data-driven activity at cycle number 25010!
+Performing data-driven activity at cycle number 25011!
+Performing data-driven activity at cycle number 25012!
+
+Performing data-driven activity at cycle number 26000!
+Performing data-driven activity at cycle number 26001!
+Performing data-driven activity at cycle number 26002!
+Performing data-driven activity at cycle number 26003!
+Performing data-driven activity at cycle number 26004!
+Performing data-driven activity at cycle number 26005!
+Performing data-driven activity at cycle number 26006!
+Performing data-driven activity at cycle number 26007!
+Performing data-driven activity at cycle number 26008!
+Performing data-driven activity at cycle number 26009!
+Performing data-driven activity at cycle number 26010!
+Performing data-driven activity at cycle number 26011!
+Performing data-driven activity at cycle number 26012!
+
+Performing data-driven activity at cycle number 27000!
+Performing data-driven activity at cycle number 27001!
+Performing data-driven activity at cycle number 27002!
+Performing data-driven activity at cycle number 27003!
+Performing data-driven activity at cycle number 27004!
+Performing data-driven activity at cycle number 27005!
+Performing data-driven activity at cycle number 27006!
+Performing data-driven activity at cycle number 27007!
+Performing data-driven activity at cycle number 27008!
+Performing data-driven activity at cycle number 27009!
+Performing data-driven activity at cycle number 27010!
+Performing data-driven activity at cycle number 27011!
+Performing data-driven activity at cycle number 27012!
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (19 entries) is now:
+0:[ ] : communicated a, 1, 2.0
+1:[N] : lastTime 1004309517536
+2:[ ] : printing_done goal1
+3:[ ] : initialized False
+4:[ ] : test_done False
+5:[ ] : count 0
+6:[ ] : achieve_goal 2.2, Two, 2
+7:[N] : cycle_num 27522
+8:[ ] : communicated First
+9:[ ] : communicated Second
+10:[ ] : indirect_communicated Second
+11:[ ] : communicated goal1
+12:[ ] : communicated goal1+Third
+13:[ ] : indirect_communicated goal1+Third
+14:[ ] : communicated Hello
+15:[ ] : communicated there.
+16:[ ] : communicated This is
+17:[ ] : communicated a test.
+18:[N] : goal_resets 4
+goal_test 2.2 "Two" 2 
+  Binding:
+    Size:        	4
+    NewWMBinding:	true
+      [0] $CYCLE_NUM = 27521
+      [1] $RESETS = 4
+      [2] $LASTTIME = 1004309516535
+      [3] $TIME = 1004309517536
+
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	27567
+  Number of Null APLs:		27522
+  Number of Goals established:	42
+  Number of interpreter cycles:	27522
+
+  APL generation time:		0.982 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.15 seconds.
+  Observer execution time:	1.762 seconds.
+  Total run time:		3.004 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM debugging.jam 
+Interpreter::parse: Building interpreter from: debugging.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Goal Argument = Goal Name (JAM_test_done)
+Value = 99
+New Value = 99JAM:Agent's World Model (6 entries) is now:
+0:[ ] : test_done False
+1:[ ] : test_entry 1.0
+2:[ ] : initialized True
+3:[ ] : goal_argument Goal Name (JAM_test_done)
+4:[ ] : value 99
+5:[ ] : test_wm AAAA, 1.0, 3
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+JAM:Agent's World Model (7 entries) is now:
+0:[ ] : test_done False
+1:[ ] : test_entry 1.0
+2:[ ] : initialized True
+3:[ ] : goal_argument Goal Name (JAM_test_done)
+4:[ ] : value 99
+5:[ ] : test_wm AAAA, 1.0, 3
+6:[ ] : test_wm CCCC, 3.0, 9
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+JAM:Agent's World Model (9 entries) is now:
+0:[ ] : test_done False
+1:[ ] : test_entry 1.0
+2:[ ] : initialized True
+3:[ ] : goal_argument Goal Name (JAM_test_done)
+4:[ ] : value 99
+5:[ ] : test_wm AAAA, 1.0, 3
+6:[ ] : test_wm CCCC, 3.0, 9
+7:[ ] : second_level_subgoal 
+8:[ ] : test_wm BBBB, 2.0, 6
+cccccccccccccccccccccccccccccc
+dddddddddddddddddddddddddddddd
+zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	27
+  Number of Null APLs:		24
+  Number of Goals established:	3
+  Number of interpreter cycles:	24
+
+  APL generation time:		0.0 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM doallany1.jam 
+Interpreter::parse: Building interpreter from: doallany1.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+First line.
+Second line.
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Before OR
+$TRY_SUBGOAL = 0 before ++
+$TRY_SUBGOAL = 1 after ++
+After OR
+Before OR
+$TRY_SUBGOAL = 1 before ++
+$TRY_SUBGOAL = 2 after ++
+After OR
+Before OR
+$TRY_SUBGOAL = 2 before ++
+$TRY_SUBGOAL = 3 after ++
+After OR
+Before OR
+$TRY_SUBGOAL = 3 before ++
+$TRY_SUBGOAL = 4 after ++
+After OR
+Before OR
+$TRY_SUBGOAL = 4 before ++
+$TRY_SUBGOAL = 5 after ++
+After OR
+Had to try second_level_subgoal 5 times
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Fourth line.
+Fifth line.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	37
+  Number of Null APLs:		35
+  Number of Goals established:	2
+  Number of interpreter cycles:	35
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.02 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM doallany2.jam 
+Interpreter::parse: Building interpreter from: doallany2.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Line A.
+ANY Branch 1 will fail.
+ANY Branch 6 will fail.
+ANY Branch 2 will fail.
+ANY Branch 5 will fail.
+ANY Branch 4.
+ALL Branch 1.
+ALL Branch 6 will fail.
+DO_ALL construct failed 1 times.
+ALL Branch 1.
+ALL Branch 6 will fail.
+DO_ALL construct failed 2 times.
+ALL Branch 1.
+ALL Branch 6 will fail.
+DO_ALL construct failed 3 times.
+ALL Branch 1.
+ALL Branch 6 will fail.
+DO_ALL construct failed 4 times.
+ALL Branch 3.
+ALL Branch 4.
+ALL Branch 1.
+ALL Branch 6 will fail.
+DO_ALL construct failed 5 times.
+Line Z.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	41
+  Number of Null APLs:		40
+  Number of Goals established:	1
+  Number of interpreter cycles:	40
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM goalsemantics.jam 
+Interpreter::parse: Building interpreter from: goalsemantics.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Action 1.
+Action 2.
+Action 3.
+SubAction 1.
+SubAction 2.
+SubAction 3.
+SubAction 4.
+SubAction 5.
+SubAction 6.
+Action 4.
+Action 5.
+Action 6.
+0
+9	8	7	6	9	8	7	6	1
+9	8	7	6	9	8	7	6	2
+9	8	7	6	9	8	7	6	3
+9	8	7	6	9	8	7	6	4
+9	8	7	6	9	8	7	6	5
+9	8	7	6	9	8	7	6	
+Done with loop
+6	5	4	3	2	1	First
+Second
+test2
+test2+Third
+
+JAM
+Hello
+there.
+This is
+a test.
+A branch.
+Another branch.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	192
+  Number of Null APLs:		179
+  Number of Goals established:	13
+  Number of interpreter cycles:	179
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.05 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.07 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM hanoi.jam 
+Interpreter::parse: Building interpreter from: hanoi.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Dst to Aux
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Aux to Src
+Move from Dst to Aux
+Move from Dst to Src
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+Move from Src to Aux
+Move from Dst to Aux
+Move from Src to Dst
+Move from Aux to Src
+Move from Aux to Dst
+Move from Src to Dst
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	1019
+  Number of Null APLs:		637
+  Number of Goals established:	382
+  Number of interpreter cycles:	637
+
+  APL generation time:		0.06 seconds.
+  Intending time:		0.01 seconds.
+  Plan execution time:		0.1 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.21 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM introspec.jam 
+Interpreter::parse: Building interpreter from: introspec.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Starting toplevel goal
+Invalid number of arguments: 0 to function "com.irs.jam.primitives.pIsToplevelGoalp.execute"
+
+Test introspection primitives **IS NOT** a toplevel goal.
+Just before subgoaling
+Starting subgoal
+The subgoal **IS NOT** a toplevel goal.
+1: $testVar is: 0
+2: $testVar is: 1
+Starting toplevel goal
+Test introspection primitives is 0
+1: $testVar is: 0
+2: $testVar is: 1
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	25
+  Number of Null APLs:		23
+  Number of Goals established:	2
+  Number of interpreter cycles:	23
+
+  APL generation time:		0.02 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.02 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.04 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM javanew.jam 
+Interpreter::parse: Building interpreter from: javanew.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+In NEW test.
+In NEW function, className=.com.irs.jam.examples.TestClass
+Object is com.irs.jam.examples.TestClass@4d2e5f
+TestClass::print: intMember = 9
+TestClass::print: realMember = 4.5
+TestClass::print: stringMember = Full constructor used
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	6
+  Number of Null APLs:		5
+  Number of Goals established:	1
+  Number of interpreter cycles:	5
+
+  APL generation time:		0.021 seconds.
+  Intending time:		0.01 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.031 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM lisplist.jam 
+Interpreter::parse: Building interpreter from: lisplist.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+
+length of string: abc def ghi is: 11
+first of abc def ghi is: abc
+first of abc def ghi is: abc
+last of abc def ghi is: ghi
+last of abc def ghi is: ghi
+rest of abc def ghi is: def ghi
+rest of abc def ghi is: def ghi
+first of def ghi is: def
+rest of def ghi is: ghi
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	22
+  Number of Null APLs:		21
+  Number of Goals established:	1
+  Number of interpreter cycles:	21
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM load.jam 
+Interpreter::parse: Building interpreter from: load.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Loading basic.jam
+LoadAction: loading "basic.jam"
+Interpreter::parse: Building interpreter from: basic.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+goal1:0	9	8	7	6	9	8	7	6	
+goal1:1	9	8	7	6	9	8	7	6	
+goal1:2	9	8	7	6	9	8	7	6	
+goal1:3	9	8	7	6	9	8	7	6	
+goal1:4	9	8	7	6	9	8	7	6	
+goal1:5	9	8	7	6	9	8	7	6	
+goal1: Done with loop
+goal1:6	5	4	3	2	1	First
+Second
+goal1
+goal1+Third
+
+JAM
+Hello
+there.
+This is
+a test.
+A branch.
+Another branch.
+
+goal2:0	9	8	7	6	9	8	7	6	
+goal2:1	9	8	7	6	9	8	7	6	
+goal2:2	9	8	7	6	9	8	7	6	
+goal2:3	9	8	7	6	9	8	7	6	
+goal2:4	9	8	7	6	9	8	7	6	
+goal2:5	9	8	7	6	9	8	7	6	
+goal2: Done with loop
+goal2:6	5	4	3	2	1	goal2
+goal2+Third
+
+JAM
+A branch.
+Another branch.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	340
+  Number of Null APLs:		324
+  Number of Goals established:	16
+  Number of interpreter cycles:	324
+
+  APL generation time:		0.03 seconds.
+  Intending time:		0.01 seconds.
+  Plan execution time:		0.09 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.15 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM maintain.jam 
+Interpreter::parse: Building interpreter from: maintain.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (5 entries) is now:
+0:[N] : fact1 true
+1:[N] : initialized True
+2:[N] : fact3 false
+3:[N] : lastTime 1004309522994
+4:[N] : goal_resets 1
+
+
+Restoring MAINTAIN state, step 1!
+Restoring MAINTAIN state, step 2!
+Restoring MAINTAIN state, step 3!
+
+
+Achieving goal state of:
+goal_test 2.2 "Two" 2
+Achieving goal state, step 2!
+Restoring MAINTAIN state, step 4!
+Restoring MAINTAIN state, step 5!
+Restoring MAINTAIN state, step 6!
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (6 entries) is now:
+0:[ ] : fact1 true
+1:[ ] : initialized True
+2:[ ] : fact3 false
+3:[ ] : achieve_goal 2.2, Two, 2
+4:[N] : lastTime 1004309528001
+5:[N] : goal_resets 2
+
+
+Restoring MAINTAIN state, step 1!
+Restoring MAINTAIN state, step 2!
+Restoring MAINTAIN state, step 3!
+Restoring MAINTAIN state, step 4!
+Restoring MAINTAIN state, step 5!
+Restoring MAINTAIN state, step 6!
+
+Retracting MAINTAIN state.
+CYCLE: Intention Structure is now:
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 2.2 "Two" 2 
+  Utility	: 0.0
+  New ?    	: True
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+CYCLE: World Model is now:
+JAM:Agent's World Model (6 entries) is now:
+0:[ ] : fact1 true
+1:[ ] : initialized True
+2:[ ] : fact3 false
+3:[ ] : achieve_goal 2.2, Two, 2
+4:[N] : lastTime 1004309533008
+5:[N] : goal_resets 3
+goal_test 2.2 "Two" 2 
+  Binding:
+    Size:        	4
+    NewWMBinding:	true
+      [0] $RESETS = 3
+      [1] $LASTTIME = 1004309528001
+      [2] $TIME = 1004309533008
+      [3] $VALUE = True
+
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	167948
+  Number of Null APLs:		167944
+  Number of Goals established:	3
+  Number of interpreter cycles:	167944
+
+  APL generation time:		1.061 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.22 seconds.
+  Observer execution time:	7.843 seconds.
+  Total run time:		10.024 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM memberaccess.jam 
+Interpreter::parse: Building interpreter from: memberaccess.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+In member access test.
+The value of com.irs.jam.Value.VAL_REAL is 2
+The value of com.irs.jam.Action.ACT_OBJECT is 19
+The value of com.irs.jam.IntentionStructure.IS_ABANDONED is 4
+The value of $testObject.intMember is 1
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	8
+  Number of Null APLs:		7
+  Number of Goals established:	1
+  Number of interpreter cycles:	7
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.02 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM metalevel.jam 
+Interpreter::parse: Building interpreter from: metalevel.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+In metalevel plan!  APL is:
+Applicable Plan List:
+Size: 2
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: a_goal
+  Plan name: Achieve a goal, plan 2
+  Utility: 0.0
+  Binding:
+    Size:        	1
+    NewWMBinding:	false
+      [0] $STRING = True
+
+
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: a_goal
+  Plan name: Achieve a goal, plan 1
+  Utility: 0.0
+  Binding:
+    Size:        	1
+    NewWMBinding:	false
+      [0] $STRING = True
+
+
+getAttributeValue: value returned is 19.2
+Found new lowest cost APL Element at #1
+getAttributeValue: value returned is 50.6
+APL Element at #2 was not lowest cost.
+Lowest cost APL Element is #1
+Intending APL Element:
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: a_goal
+  Plan name: Achieve a goal, plan 2
+  Utility: 0.0
+  Binding:
+    Size:        	1
+    NewWMBinding:	false
+      [0] $STRING = True
+
+
+In metalevel plan! Retracting WM entry for this level.
+In metalevel plan! Retracting WM entry for previous level.
+Achieving WAITed for goal 1, plan 2.
+Achieving WAITed for goal 2, plan 2.
+Achieving WAITed for goal 3, plan 2.
+Achieving WAITed for goal 4, plan 2.
+Achieving WAITed for goal 5, plan 2.
+Achieving WAITed for goal 6, plan 2.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	33
+  Number of Null APLs:		31
+  Number of Goals established:	2
+  Number of interpreter cycles:	31
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM methodinvoke.jam 
+Interpreter::parse: Building interpreter from: methodinvoke.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Hostname is marcus
+TestClass::print: intMember = 1
+TestClass::print: realMember = 3.3
+TestClass::print: stringMember = Default constructor used
+
+3 test object was not null.
+5 test object was not null.
+6 test object was not null.
+8 test object was null.
+1 test object was null.
+6 test object was not null.
+7 test object was null.
+8 test object was null.
+
+In method 5a: a, b, 5.0
+
+$val = 15.0
+
+In method 5a: a, b, 15.0
+
+$val = 45.0
+
+In method 5a: a, b, 45.0
+
+$val = 135.0
+
+In method 5a: a, b, 135.0
+
+$val = 405.0
+
+In method 2: 2, 5, gggg
+
+$val = hello gggg
+
+In method 2: 2, 5, hello gggg
+
+$val = hello hello gggg
+
+In method 2: 2, 5, hello hello gggg
+
+$val = hello hello hello gggg
+
+In method 2: 2, 5, hello hello hello gggg
+
+$val = hello hello hello hello gggg
+
+In method 2: 2, 5, hello hello hello hello gggg
+
+$val = hello hello hello hello hello gggg
+
+In method 2: 2, 5, hello hello hello hello hello gggg
+
+$val = hello hello hello hello hello hello gggg
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	46
+  Number of Null APLs:		45
+  Number of Goals established:	1
+  Number of interpreter cycles:	45
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.05 seconds.
+  Observer execution time:	0.011 seconds.
+  Total run time:		0.071 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM nativejava.jam 
+Interpreter::parse: Building interpreter from: nativejava.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Action 1
+TestClass::print: intMember = 1
+TestClass::print: realMember = 3.3
+TestClass::print: stringMember = Default constructor used
+
+TestClass::print: intMember = 2932
+TestClass::print: realMember = 0.12345
+TestClass::print: stringMember = Default constructor used
+
+
+In method 6: com.irs.jam.examples.TestClass@6ed786
+TestClass::print: intMember = 54321
+TestClass::print: realMember = 5.4321
+TestClass::print: stringMember = 54321
+
+In method 3b: 1st argument, 2nd argument, 9
+
+
+In method 3b: 1st argument, 2nd argument, 9
+
+
+In method 3c: 1st argument, 2nd argument, 9.9
+
+
+In method 3a: 1st argument, 2nd argument, 9
+
+
+In method 4: 1st argument, 2nd argument, 9
+
+
+In method 5b: 1st argument, 3.3, 9.9
+   3.3 + 9.9 = 13.2
+Action 2
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	21
+  Number of Null APLs:		20
+  Number of Goals established:	1
+  Number of interpreter cycles:	20
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM observerfail.jam 
+Interpreter::parse: Building interpreter from: observerfail.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+In Observer body at cycle number 0.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+First line.
+In Observer body at cycle number 1.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+Second line.
+In Observer body at cycle number 2.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+In Observer body at cycle number 3.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+In Observer body at cycle number 4.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+In Observer body at cycle number 5.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+11111111111111111111111111
+In Observer body at cycle number 6.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+22222222222222222222222222
+In Observer body at cycle number 7.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+In Observer body at cycle number 8.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+Fourth line.
+In Observer body at cycle number 9.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+Fifth line.
+In Observer body at cycle number 10.
+
+JAM: Warning!  Detected goal action within execution of Observer body.  Ignoring.
+
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	14
+  Number of Null APLs:		11
+  Number of Goals established:	3
+  Number of interpreter cycles:	11
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.02 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM parse-string.jam 
+Interpreter::parse: Building interpreter from: parse-string.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Retracting relation:APL 
+JAM:Agent's World Model (0 entries) is now:
+Parsing a string.
+JAM:Agent's World Model (0 entries) is now:
+JAM Parser Version 62 + 78i: 
+JAM::WorldModel:assert
+JAM:Agent's World Model (1 entries) is now:
+0:[N] : hello 1.3, 2.0
+JAM string parse successful.
+JAM:Agent's World Model (1 entries) is now:
+0:[N] : hello 1.3, 2.0
+Parsing another string.
+JAM:Agent's World Model (1 entries) is now:
+0:[ ] : hello 1.3, 2.0
+JAM Parser Version 62 + 78i: 
+JAM string parse successful.
+JAM:Agent's World Model (1 entries) is now:
+0:[ ] : hello 1.3, 2.0
+JAM::WorldModel:assert
+JAM:Agent's World Model (2 entries) is now:
+0:[ ] : hello 1.3, 2.0
+1:[N] : APL 0, com.irs.jam.APL@172e08, 1
+Achieving another goal.
+Achieving another goal.
+Achieving another goal.
+Achieving another goal.
+Achieving another goal.
+Achieving another goal.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	16
+  Number of Null APLs:		13
+  Number of Goals established:	2
+  Number of interpreter cycles:	13
+
+  APL generation time:		0.02 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM post.jam 
+Interpreter::parse: Building interpreter from: post.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+JAM:Agent's World Model (7 entries) is now:
+0:[ ] : test_done False
+1:[ ] : hello1 False
+2:[ ] : hello2 0
+3:[ ] : hello3 hey there
+4:[ ] : hello4 1.1
+5:[ ] : initialized True
+6:[ ] : APL 0, com.irs.jam.APL@729854, 1
+
+
+$LOCAL_VALUE = 0
+$FLOAT = 1.1
+$TEXT = String1
+$INT = 1
+$WM_ENTRY = False
+
+
+Subgoal $LOCAL_VALUE = 5
+Subgoal $FLOAT = 1.1
+Before UNPOST
+IntentionStructure:
+  Stacks: 5
+
+Stack#0
+  Goal   	: goal_test 1.1 "String1" 1 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_ACTIVE
+  Subgoal  	: com.irs.jam.Goal@6eb38a => subgoal
+  Prev_Goal	: null => NONE
+  Intention	: com.irs.jam.APLElement@4d2e5f
+  RuntimeState	: com.irs.jam.PlanRuntimeSequenceState@1f953d
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: goal_test
+  Plan name: Test Argument Passing
+  Utility: 0.0
+  Binding:
+    Size:        	5
+    NewWMBinding:	true
+      [0] $FLOAT = 1.1
+      [1] $TEXT = String1
+      [2] $INT = 1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 0
+
+
+  Goal   	: subgoal String1 1 1.1 
+  Binding:
+    Size:        	5
+    NewWMBinding:	true
+      [0] $FLOAT = 1.1
+      [1] $TEXT = String1
+      [2] $INT = 1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 0
+
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: com.irs.jam.Goal@7ee6fc => goal_test
+  Intention	: com.irs.jam.APLElement@6ed786
+  RuntimeState	: com.irs.jam.PlanRuntimeSequenceState@7aeca
+APLElement:
+  From goal: com.irs.jam.Goal@6eb38a
+  Goal name: subgoal
+  Plan name: Test Argument Passing
+  Utility: 0.0
+  Binding:
+    Size:        	8
+    NewWMBinding:	false
+      [0] $TEXT = String1
+      [1] $INT = 1
+      [2] $FLOAT = 1.1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 5
+      [5] $flt = NOT BOUND
+      [6] $string = NOT BOUND
+      [7] $num = NOT BOUND
+
+
+
+Stack#1
+  Goal   	: goal_test2 1.1 "String2" 6 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+Stack#2
+  Goal   	: goal_test2 2.2 "String3" 6 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+Stack#3
+  Goal   	: goal_test2 3.3 "String4" 6 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+Stack#4
+  Goal   	: goal_test2 4.4 "String6" 6 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_UNTRIED
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: null
+  RuntimeState	: null
+
+goal_test2 
+  Binding:
+    Size:        	8
+    NewWMBinding:	false
+      [0] $TEXT = String1
+      [1] $INT = 1
+      [2] $FLOAT = 1.1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 5
+      [5] $flt = NOT BOUND
+      [6] $string = NOT BOUND
+      [7] $num = NOT BOUND
+
+After UNPOST
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 1.1 "String1" 1 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_ACTIVE
+  Subgoal  	: com.irs.jam.Goal@6eb38a => subgoal
+  Prev_Goal	: null => NONE
+  Intention	: com.irs.jam.APLElement@4d2e5f
+  RuntimeState	: com.irs.jam.PlanRuntimeSequenceState@1f953d
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: goal_test
+  Plan name: Test Argument Passing
+  Utility: 0.0
+  Binding:
+    Size:        	5
+    NewWMBinding:	true
+      [0] $FLOAT = 1.1
+      [1] $TEXT = String1
+      [2] $INT = 1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 0
+
+
+  Goal   	: subgoal String1 1 1.1 
+  Binding:
+    Size:        	5
+    NewWMBinding:	true
+      [0] $FLOAT = 1.1
+      [1] $TEXT = String1
+      [2] $INT = 1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 0
+
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: com.irs.jam.Goal@7ee6fc => goal_test
+  Intention	: com.irs.jam.APLElement@6ed786
+  RuntimeState	: com.irs.jam.PlanRuntimeSequenceState@7aeca
+APLElement:
+  From goal: com.irs.jam.Goal@6eb38a
+  Goal name: subgoal
+  Plan name: Test Argument Passing
+  Utility: 0.0
+  Binding:
+    Size:        	8
+    NewWMBinding:	false
+      [0] $TEXT = String1
+      [1] $INT = 1
+      [2] $FLOAT = 1.1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 5
+      [5] $flt = NOT BOUND
+      [6] $string = NOT BOUND
+      [7] $num = NOT BOUND
+
+
+
+$flt=*Undefined Value*
+$string=*Undefined Value*
+$num=*Undefined Value*
+Subgoal $TEXT = String1
+Subgoal $INT = 1
+Subgoal $WM_ENTRY = False
+After subgoaling
+IntentionStructure:
+  Stacks: 1
+
+Stack#0
+  Goal   	: goal_test 1.1 "String1" 1 
+  Utility	: 0.0
+  New ?    	: False
+  Status   	: IS_ACTIVE
+  Subgoal  	: null => NONE
+  Prev_Goal	: null => NONE
+  Intention	: com.irs.jam.APLElement@4d2e5f
+  RuntimeState	: com.irs.jam.PlanRuntimeSequenceState@1f953d
+APLElement:
+  From goal: com.irs.jam.Goal@7ee6fc
+  Goal name: goal_test
+  Plan name: Test Argument Passing
+  Utility: 0.0
+  Binding:
+    Size:        	5
+    NewWMBinding:	true
+      [0] $FLOAT = 1.1
+      [1] $TEXT = String1
+      [2] $INT = 1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 0
+
+
+
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	31
+  Number of Null APLs:		29
+  Number of Goals established:	6
+  Number of interpreter cycles:	29
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.02 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.05 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM precond.jam 
+Interpreter::parse: Building interpreter from: precond.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Executing EFFECTS plan.
+JAM:Agent's World Model (6 entries) is now:
+0:[ ] : precondition_test True
+1:[ ] : APL 0, com.irs.jam.APL@6eb38a, 2
+2:[ ] : context_test True
+3:[ ] : cycle_num 1
+4:[ ] : initialized True
+5:[N] : effects_test complete
+Value = 99
+New Value = 99
+
+The next action in the plan will cause the plan to fail
+as it will invalidate this plan's context, which is evaluated
+while the plan is executing.  The agent should look like it
+"locks up" at this point since it has a goal but no longer
+has an applicable way of achieving that goal since the precondition.
+is no longer true.
+
+Removing "locked up" goal of 'ACHIEVE precondition_test_done;'
+This should allow the agent to continue and the agent
+should exit because it has no more goals to achieve.
+precondition_test_done 
+  Binding:
+    Size:        	2
+    NewWMBinding:	false
+      [0] $CYCLE_NUM = 20000
+      [1] $VALUE = True
+
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	20003
+  Number of Null APLs:		20001
+  Number of Goals established:	2
+  Number of interpreter cycles:	20001
+
+  APL generation time:		0.27 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.04 seconds.
+  Observer execution time:	0.802 seconds.
+  Total run time:		1.392 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM relations.jam 
+Interpreter::parse: Building interpreter from: relations.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+2.1 < 2.0 = 0
+2.1 <= 2.0 = 0
+2.1 > 2.0 = 1
+2.1 >= 2.0 = 1
+
+2.1 < 2.1 = 0
+2.1 <= 2.1 = 1
+2.1 > 2.1 = 0
+2.1 >= 2.1 = 1
+
+2.0 < 2.1 = 1
+2.0 <= 2.1 = 1
+2.0 > 2.1 = 0
+2.0 >= 2.1 = 0
+
+"2.1" < "2.0" = 0
+"2.1" <= "2.0" = 0
+"2.1" > "2.0" = 1
+"2.1" >= "2.0" = 1
+
+"2.1" < "2.1" = 0
+"2.1" <= "2.1" = 1
+"2.1" > "2.1" = 0
+"2.1" >= "2.1" = 1
+
+"2.0" < "2.1" = 1
+"2.0" <= "2.1" = 1
+"2.0" > "2.1" = 0
+"2.0" >= "2.1" = 0
+
+$VALUE = 3.141592654
+$VALUE = 12
+$VALUE = 24
+$VALUE = 3
+$VALUE = 1
+$VALUE = 2
+(% 2 1) = 0
+(% 3 2) = 1
+(% 5 2) = 1
+(% 5 3) = 2
+(% 129 13 5) = 2
+(abs 5) = 5
+(abs 0) = 0
+(abs -5) = 5
+(abs 5.0) = 5.0
+(abs 0.0) = -0.0
+(abs -5.0 3.2) = 5.0
+(abs "hello") = hello
+(&& (== 1 1) (== 2 2)) = 1
+(&& (== 1 1) (== 1 2)) = 0
+(|| (== 1 1) (== 2 2)) = 1
+(|| (== 1 1) (== 1 2)) = 1
+(|| (== 1 3) (== 1 2)) = 0
+(! (== 1 1)) = 0
+(! (== 1 2)) = 1
+(! (== "abc" "abc")) = 0
+(! (== "acc" "abc")) = 1
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	60
+  Number of Null APLs:		59
+  Number of Goals established:	1
+  Number of interpreter cycles:	59
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.03 seconds.
+  Total run time:		0.05 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM retrieveall.jam 
+Interpreter::parse: Building interpreter from: retrieveall.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+
+Starting plan.
+
+$FACTS was com.irs.jam.WorldModelTableBucketEnumerator@6eb38a
+$BLOCKA was *Undefined Value*
+Getting next binding.
+
+$BLOCKA is now Table
+$BLOCKA is now Block5
+$BLOCKA is now Block1
+An action failed in the first OR!
+The final variable binding was:
+$BLOCKA is now Block1
+
+$FACTS is com.irs.jam.WorldModelTableBucketEnumerator@4d2e5f
+$BLOCKA is now Block3
+$BLOCKB is now Table
+$BLOCKA is now Block2
+$BLOCKB is now Table
+$BLOCKA is now Block1
+$BLOCKB is now Block2
+$BLOCKA is now Block4
+$BLOCKB is now Block3
+$BLOCKA is now Block5
+$BLOCKB is now Block4
+An action failed in the second OR!
+The final variable bindings were:
+$BLOCKA is now Block5
+$BLOCKB is now Block4
+Table is CLEAR
+Block3 is on Table
+Block5 is CLEAR
+Block2 is on Table
+Block1 is CLEAR
+Block1 is on Block2
+Table is CLEAR
+Block5 is CLEAR
+Block1 is on *Undefined Value*
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	61
+  Number of Null APLs:		60
+  Number of Goals established:	1
+  Number of interpreter cycles:	60
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM subgoals.jam 
+Interpreter::parse: Building interpreter from: subgoals.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+$VALUE = 0
+$TEXT = hello
+
+
+$LOCAL_VALUE = 0
+$FLOAT = 0.0
+$TEXT = hi
+$INT = 1
+$WM_ENTRY = False
+Plan 2 failed!
+
+
+$LOCAL_VALUE = 0
+$FLOAT = 0.0
+$TEXT = hi
+$INT = 1
+$WM_ENTRY = TRUE
+
+
+Subgoal $LOCAL_VALUE = 5
+Subgoal $FLOAT = 0.0
+Subgoal $TEXT = hi
+Subgoal $INT = 1
+Subgoal $WM_ENTRY = TRUE
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	30
+  Number of Null APLs:		26
+  Number of Goals established:	3
+  Number of interpreter cycles:	26
+
+  APL generation time:		0.0 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM succeedfail.jam 
+Interpreter::parse: Building interpreter from: succeedfail.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+branch 1a
+branch 1b
+branch 2
+branch 3
+branch 4
+branch 5
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	13
+  Number of Null APLs:		12
+  Number of Goals established:	1
+  Number of interpreter cycles:	12
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.0 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.02 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM trycatch.jam 
+Interpreter::parse: Building interpreter from: trycatch.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+First line.
+Second line.
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Before OR
+Trying to ACHIEVE second_level_subgoal (already tried 0 times).
+11111111111111111111111111
+Second-level subgoal's plan failed!
+$TRY_SUBGOAL = 0 before ++
+$TRY_SUBGOAL = 1 after ++
+After OR
+Before OR
+Trying to ACHIEVE second_level_subgoal (already tried 1 times).
+11111111111111111111111111
+Second-level subgoal's plan failed!
+$TRY_SUBGOAL = 1 before ++
+$TRY_SUBGOAL = 2 after ++
+After OR
+Before OR
+Trying to ACHIEVE second_level_subgoal (already tried 2 times).
+11111111111111111111111111
+Second-level subgoal's plan failed!
+$TRY_SUBGOAL = 2 before ++
+$TRY_SUBGOAL = 3 after ++
+After OR
+Before OR
+Trying to ACHIEVE second_level_subgoal (already tried 3 times).
+11111111111111111111111111
+Second-level subgoal's plan failed!
+$TRY_SUBGOAL = 3 before ++
+$TRY_SUBGOAL = 4 after ++
+After OR
+Before OR
+Trying to ACHIEVE second_level_subgoal (already tried 4 times).
+11111111111111111111111111
+Second-level subgoal's plan failed!
+$TRY_SUBGOAL = 4 before ++
+$TRY_SUBGOAL = 5 after ++
+After OR
+Had to try second_level_subgoal 5 times
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Fourth line.
+Fifth line.
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	62
+  Number of Null APLs:		55
+  Number of Goals established:	7
+  Number of interpreter cycles:	55
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.02 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.04 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM unpost.jam 
+Interpreter::parse: Building interpreter from: unpost.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+
+
+$LOCAL_VALUE = 0
+$FLOAT = 1.1
+$TEXT = String1
+$INT = 1
+$WM_ENTRY = False
+
+
+Subgoal $LOCAL_VALUE = 5
+Subgoal $FLOAT = 1.1
+Before UNPOST
+goal_test2 
+  Binding:
+    Size:        	8
+    NewWMBinding:	false
+      [0] $TEXT = String1
+      [1] $INT = 1
+      [2] $FLOAT = 1.1
+      [3] $WM_ENTRY = False
+      [4] $LOCAL_VALUE = 5
+      [5] $flt = NOT BOUND
+      [6] $string = NOT BOUND
+      [7] $num = NOT BOUND
+
+After UNPOST
+$flt=*Undefined Value*
+$string=*Undefined Value*
+$num=*Undefined Value*
+Subgoal $TEXT = String1
+Subgoal $INT = 1
+Subgoal $WM_ENTRY = False
+After subgoaling
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	31
+  Number of Null APLs:		25
+  Number of Goals established:	6
+  Number of interpreter cycles:	25
+
+  APL generation time:		0.01 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.01 seconds.
+  Total run time:		0.04 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM variablescope.jam 
+Interpreter::parse: Building interpreter from: variablescope.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+Value of $variable is: 5
+Value of $subgoalVariable is: 5
+Value of $subgoalVariable is now: 0
+Value of $variable is now: 0
+
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	10
+  Number of Null APLs:		8
+  Number of Goals established:	2
+  Number of interpreter cycles:	8
+
+  APL generation time:		0.02 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.01 seconds.
+  Observer execution time:	0.0 seconds.
+  Total run time:		0.03 seconds.
+
+C:\com\irs\jam\examples>java com.irs.jam.JAM wait.jam          
+Interpreter::parse: Building interpreter from: wait.jam
+JAM Parser Version 62 + 78i: 
+JAM definition parse successful.
+0 
+Action before goal WAIT.
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 
+
+Achieving WAITed for goal.
+
+101 102 
+Action after goal WAIT.
+103 
+Action before condition WAIT.
+
+104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251 252 253 254 255 256 257 258 259 260 261 262 263 264 265 266 267 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284 285 286 287 288 289 290 291 292 293 294 295 296 297 298 299 300 
+
+Action after condition WAIT.
+301 
+JAM: All of the agent's top-level goals have been achieved!  Returning...
+
+Runtime statistics follow:
+
+  Number of APLs generated:	403
+  Number of Null APLs:		302
+  Number of Goals established:	2
+  Number of interpreter cycles:	302
+
+  APL generation time:		0.03 seconds.
+  Intending time:		0.0 seconds.
+  Plan execution time:		0.03 seconds.
+  Observer execution time:	0.05 seconds.
+  Total run time:		0.13 seconds.

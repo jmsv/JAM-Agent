@@ -1,0 +1,1240 @@
+2001-10-28    <marcush@marcush.net>
+
+	* Makefile: Updated this to a useable form. Will compile the core
+	files as well as the java files in the primitives and the examples
+	directories.
+
+	* IntentionStructure.java: Fixed a bug during intending and
+	APLElement whereby only the GoalAction utility was being
+	considered instead of the intention utility.
+
+	* PlanRuntimeSimpleState.java: Added a printout of file name and
+	line number in the case of an exception during action execution in
+	order to help with debugging.
+
+2001-10-23    <marcush@marcush.net>
+
+	* WorldModelTable.java: Synchronized the primary entries into the
+	World Model (assert, retract, and update).
+
+	* SystemFunctions.java: Modified the "sleep" primitive to use
+	Thread.wait() rather than Thread.sleep().
+
+	* IntentionStructure.java, APL.java, Goal.java, JAMParser.jj,
+	PostAction.java, PlanRuntimeGoalState.java: Added support for
+	including information about a goal's conclude relation into a
+	goal.
+
+	* Value.java: Fixed bug in toString(), where the output based on
+	the results of the test for null were reversed from what they
+	should have been.
+
+2001-09-03    <Marcus J. Huber Ph.D@marcush.net>
+
+	* NextFactAction.java, RetrieveAllAction.java: Finished
+	implementation for retrieval and iteration through all world model
+	entries matching a specified relation.
+
+2001-08-14    <Marcus J. Huber Ph.D@marcush.net>
+
+	* Binding.java: Fixed up the format and print methods to print out
+	expression values correctly.
+
+	* ExpList.java: Fixed up the print() method to print out
+	expression values correctly.
+
+2001-08-10    <Marcus J. Huber Ph.D@marcush.net>
+
+	* WorldModelTableBucketEnumerator.java: Added print method.
+
+2001-08-09    <Marcus J. Huber Ph.D@marcush.net>
+
+	* SystemFunctions.java: Added primitive action,
+	setShowActionFailure, to turn output statements on and off.
+
+	* PlanRuntimeSimpleState.java: Added output indicating action
+	failure when showActionFailure flag is true.
+
+	* Interpreter.java: Added new debugging option for selecting
+	output of action failure messages.
+
+2001-08-08    <Marcus J. Huber Ph.D@marcush.net>
+
+	* JAMParser.jj: Added code to pass in file names and line numbers
+	of actions so that action failure can be indicated/traced.
+
+	* Interpreter.java: Modified calls to parser to include file names
+
+	* PlanRuntimeSimpleState.java: Modified execute method to print
+	out the file name and the line number of an action that just
+	failed.
+
+	* JAM.java: Fixed JAM constructor to print stack trace upon parser
+	error from Interpeter, where prior to the fix it was allowing
+	parser errors to occur silently.
+
+	* LoadAction.java: Implemented execute action.
+
+2001-07-27    <marcush@marcush.net>
+
+	* SystemFunctions.java: Moved agentGo action from
+	UserFunctions.java to SystemFunctions.java
+
+2001-07-05    <marcush@marcush.net>
+
+	* IntentionStructure.java: Added a "force" argument to intend() so
+	that the utility-based intention scheme can be bypassed by
+	metalevel plans intending plans.
+
+	* Interpreter.java: Modified call to intend() to reflect new
+	"force" parameter.
+
+	* SystemFunctions.java: Modified call to intend() to reflect new
+	"force" parameter.
+
+2000-08-01    <marcush@marcush.net>
+
+	* SystemFunctions.java: Replaced all uses of PrintStream with
+	PrintWriter (per suggestion by Martin Klesen (DFKI)).
+
+	* primitives/ConnectToAgentAsClient.java: Replaced all uses of
+	PrintStream with PrintWriter (per suggestion by Martin Klesen
+	(DFKI)).
+
+	* primitives/ConnectToAgentAsServer.java: Replaced all uses of
+	PrintStream with PrintWriter (per suggestion by Martin Klesen
+	(DFKI)).
+
+	* SystemFunctions.java: Incorporated Martin Klesen's (DFKI)
+	closeConnection function that closes the input stream and the
+	output stream used for exchanging messages with another agent via
+	the 'sendMessage' and 'recvMessage' functions.
+
+	* SystemFunctions.java: Incorporated Martin Klesen's (DFKI)
+	logical operators for bitwise and, or, xor, and complement
+	Usage : (and $op1 $op2) (or $op1 $op2) (xor $op1 $op2) (not $op)
+
+	* Interpreter.java: Removed "catch (Throwable)" from parse() since
+	it wreaks havoc with threading (thanks to Martin Klesen (DFKI) for
+	pointing this out).
+
+	* Interpreter.java: Modified method "parseString(Interpreter
+	interpreter,String buf)" so that it throws a ParseException
+	instead of catching it as exception handling should be done by the
+	invoking method (thanks to Martin Klesen (DFKI) for pointing this
+	out).
+
+	* SystemFunctions.java: Incorporated Martin Klesen's (DFKI)
+	parseInt function that takes a string and returns a signed
+	integer.
+
+	* SystemFunctions.java: Modified sleep function to take argument
+	in milliseconds rather than seconds.  Removed print statement.
+
+2000-07-31    <marcush@marcush.net>
+
+	* ExpList.java: Modified print() to use quotes around string
+	values.
+
+2000-07-16    <marcush@marcush.net>
+
+	* Goal.java: Modified matchGoal to return true when :UTILITY
+	expression does not exist in goalAction but it might in the local
+	goal.  This facilitates "wildcard" dropping of goals.
+
+	* Plan.java: Added getUtility(), from Alexander Staller
+	(alexs@ai.univie.ac.at at the Austrian Research Institute for
+	Artificial Intelligence) to support his use of metalevel
+	reasoning.
+
+2000-06-21    <marcush@marcush.net>
+
+	* Multiple: Renamed run(...) methods to think(...) methods to
+	remove confusion with void run() method for threading.
+
+	* Interpreter.java: Modified return type of run() to boolean
+	rather than int, and modified return value to true when all goals
+	are completed.
+
+	* JAM.java: Added Runnable interface and void run() method for
+	support of running a JAM agent as a thread.
+
+	* IntentionStructure.java: Restored goal dropping semantics so
+	that an intended goal is not immediately removed but is marked as
+	abandoned and the Interpreter cleans up an intention stack by
+	executing failure sections of plans from the bottom up to the goal
+	to be removed.
+
+	* APL.java: Minor change to debug printout.
+
+	* SystemFunctions.java: Modified unassign to use unbindVariable
+	method rather than setting the value directly here.
+	
+	* SystemFunctions.java: Added disablePlan action.
+
+	* PlanTable.java: Added comments to methods
+
+	* ObjectAction.java: Modified call to PrimitiveAction.execute to
+	have a fully-qualified name rather than just the function name
+	(which was always "execute" and was therefore uninformative).
+
+	* JAMParser.jj: Removed hex-related tokens
+
+	* JAMParser.jj: Added java method invocation capability in
+	functional locations.
+
+	* JAM.java: Added JAM(String argv[]) method to permit command-line
+	switches to be passed in (had removed that ability somewhere down
+	the line)
+
+	* IntentionStructure.java: Renamed refreshPriorities to
+	refreshUtilities and changed from private to public.
+
+	* IntentionStructure.java: Modified intend() semantics such that
+	an applicable intention does not actually get intended unless it's
+	higher utility than anything currently active.
+
+	* FunctionCall.java: Added currentGoal object to all "execute"s so
+	that primitive functions can access them.
+
+	* DList.java: Added comments to all methods
+
+
+2000-04-24    <marcush@marcush.net>
+
+	* PlanTable.java: Fixed bug with disable(), where loop was going
+	over entire table size rather than just the table entries that
+	were actually filled.
+
+
+2000-03-06    <marcush@marcush.net>
+
+	* JAM.java: Added getInterpreter() method.
+
+
+1999-06-29  marcush  <marcush@marcush.net>
+
+	* Interpreter.java: Removed a debug statement.
+
+	* RestoreAgentCheckpoint.java: Fixed typo in debug output.
+
+	* JAM.java: Added an Interpreter member and also a method to
+ 	restart the agent.  If the agent is instantiated from within
+ 	application code (rather than the command-line), when the agent
+ 	finishes all of its goals and returns, the application code can
+ 	re-invoke the agent with new goals and/or world model and/or plans
+ 	and the entire state of the prior execution is kept.
+
+
+1999-06-13  marcush  <marcush@marcush.net>
+
+	* IntentionStructure.java: Modified addUnique().  Top-level goals
+ 	need to be grounded (all arguments are values, not expressions or
+ 	variables), but there was a bug in the old version of addUnique
+ 	that was causing the goal's relation to be grounded "in place"
+ 	within the plan (that is, the grounding established the first time
+ 	through the action would be used every subsequent time through
+ 	that plan action).  The fix was to copy the goal's relation before
+ 	grounding it and then adding that to the goal list.
+
+	* ValueObject.java, ValueLong.java: Added support for checking for
+ 	null Java Objects at the plan level, allowing comparison to 0.
+
+
+1999-06-08  marcush  <marcush@marcush.net>
+
+	* SucceedAction.java: Added SUCCEED action that will do nothing
+ 	but simply return TRUE.  This will come in useful for "catch"
+ 	branches, e.g., the last branch of an OR branch, where the idea of
+ 	the OR is that it succeeds even if all the branches fail.
+
+	* Removed ParseAction class and PARSE plan action.  The
+	"parseString" primitive function suffices for this functionality.
+	Maybe at some point the functionality should be moved into a more
+	"formal" position as an action.
+
+
+1999-06-04  marcush  <marcush@marcush.net>
+
+	* SystemFunctions.java: Modified the socket-based primitives to
+ 	use a BufferedReader rather than a DataInputStream to remove the
+ 	deprecation messages.
+
+	* JAM.java: Modified run method to throw parse errors rather than
+ 	catch them and exit so one agent doesn't kill a multi-agent Java
+ 	Virtual Machine.
+
+	* SystemFunctions.java: Added mod from Martin Klesen (DFKI) to the
+ 	"recvMessage" primitive function that the message variable gets
+ 	returned as Value.UNDEFINED rather than null as it used to in
+ 	certain circumstances.
+	
+	* SystemFunctions.java: Added mod from Martin Klesen (DFKI) to the
+ 	"rest" primitive function that fixes a bug.
+
+	* SystemFunctions.java: Added new primitive action, unassign, from
+	Martin Klesen (DFKI) that takes a variable as an argument and
+	removes any bindings that the variable may have.
+	
+	* SystemFunctions.java: Added parseString mod from Martin Klesen
+	(DFKI) that catches a parsing exception rather than allowing it to
+	kill the agent.
+
+
+1999-06-02  marcush  <marcush@marcush.net>
+
+	* UserFunctions.java: Added agentGo primitive function to provide
+	agent mobility functionality.  Used in conjunction with the
+	AgentMobilityServer class which receives the agent using this new
+	primitive.
+
+	* AgentMobilityServer.java: Receives a JAM agent that's used the
+	agentGo primitive function and resumes the agent from where it
+	left off.
+
+	* NextFactAction.java, RetrieveAllAction.java: Added as an initial
+	implementation for full retrieval of all world model entries
+	matching the specified relation.
+
+	* JAM.java: Added '-a' command-line option as a synonym to the
+	'-s' option.
+
+	* BindingList.java: Filled in the print() and format() methods.
+
+	* SystemFunctions.java: Added println primitive function.
+	Identical to the print primitive but adds an extra newline at the
+	end of whatever's printed.
+
+	* JAMParser.jj: Added support for class/method invocation in
+	expression.
+
+	* JAMParser.jj: Added initial support for RETRIEVEALL and NEXTFACT
+	actions (set-retrieval and iterator of world model facts).
+
+	* Value.java: Added constructors for the 1st-level classes for
+	Java's primitive types (Integer, Long, Double, and Float).
+
+	* FunctionCall.java: Added support for class/method invocation in
+	expressions.  Example forms are:
+	    ASSIGN $val (Class.Method[$obj] $argumentList;
+	    TEST : (== "True" (Class.Method[$obj] $argumentList));
+
+
+1998-11-15  marcush  <marcush@marcush.net>
+
+	* Interpreter.java: Added time-measuring code to keep track of
+	accumulated time for total run time, observer execution time, APL
+	generation time, plan (action) execution time, and intending
+	time.
+
+
+1998-11-08  marcush  <marcush@marcush.net>
+
+	* GoalAction.java: :BY and :NOT-BY options tested and working.
+
+
+1998-11-04  marcush  <marcush@irs.home.com>
+
+	* JAM.java: Moved Interpreter from a member to a local variable
+ 	within run methods.  Redesigned the execution interface to support
+ 	invocation of agents from scratch (i.e., non-checkpointed) from
+ 	within Java code.  Modified the version number.
+
+
+1998-11-03  marcush  <marcush@irs.home.com>
+
+	* RestoreAgentCheckpoint.java: Added to JAM distribution as an
+ 	official file and modified to reflect architectural changes.
+
+	* SystemFunctions.java: Moved checkpointing, exec, and fail
+ 	primitive functions from UserFunctions.java to this file.
+
+	* SystemFunctions.java: Modified checkpointing primitive functions
+	to reflect recent changes to the architecture to support
+	multiple agents per JVM.
+
+
+1998-11-01  marcush  <marcush@irs.home.com>
+
+	* JAMParser.jj: Made changes to the object-instance method
+ 	invocation for of EXECUTE so that the class path is not required
+ 	(permits short EXECUTE lines: e.g., EXECUTE print[$object] rather
+ 	than EXECUTE com.irs.jam.examples.TestClass.print[$object]).
+
+	* ObjectAction.java: Made changes so that methods with objects as
+	parameters are found (only atomic types were being matched
+	correctly before).
+
+	* ObjectAction.java: Made changes to accomodate the more succinct
+	invocation of methods on object instances.
+
+	* ObjectAction.java: Fixed previous limitation of not being able
+ 	to pass variables as parameters when invoking method calls from
+ 	plans (e.g., can now use $integer rather than being forced to use
+	constants in the line EXECUTE setIntMember[$obj] $integer;)
+
+	* SimpleAction.java: Removed warning message regarding not finding
+ 	a function definition.
+
+
+1998-10-29  marcush  <marcush@irs.home.com>
+
+	* PrimitiveAction.java: Created file.  Defines an interface which
+ 	agent programmers can implement classes for (e.g., "class
+ 	NewPrimitive implements PrimitiveAction { .... }".  Plans using
+ 	this primitive function definition scheme provides the highest
+ 	functionality regarding passing values to and from primitive
+ 	functions by using the same Value class constructors and methods
+ 	employed in the original UserFunctions primitive action
+ 	specification.  See the manual for full details.
+
+	* WorldModelAction.java: Added Intrepeter member and accessor.
+  	Added intrepreter parameter to constructor.  Added method
+ 	comments.
+
+	* RetractAction.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* AssertAction.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* UpdateAction.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* FactAction.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* RetrieveAction.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* RelationCondition.java: Added Intrepeter member and accessor.
+  	Added intrepreter parameter to constructor.  Added method
+ 	comments.
+
+	* FactCondition.java: Added intrepreter parameter to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* RetrieveCondition.java: Added intrepreter parameter to
+ 	constructor.  Changed method calls to use internal Interpreter
+ 	object.  Added method comments.
+
+	* UnpostAction.java: Added Intrepeter member.  Added intrepreter
+ 	parameter to constructor.  Changed method calls to use internal
+ 	Interpreter object.  Added method comments.
+
+	* PlanRuntimeGoalState.java: Changed method calls to use local
+ 	Interpreter accessors.  Added method comments.
+
+	* PlanRuntimeWaitState.java: Modified accessors to interpreter to
+ 	use new accessors.
+
+	* Predicate.java: Added Intrepeter member and accessor.  Added
+ 	method comments.  Removed an unused constructor.
+
+	* PredicateRetrieve.java: Added interpreter argument to
+ 	constructor.  Changed method calls to use internal Interpreter
+ 	object.  Added method comments.
+
+	* PredicateFact.java: Added interpreter argument to constructor.
+  	Changed method calls to use internal Interpreter object.  Added
+ 	method comments.
+
+	* PredicateAchieve.java: Added interpreter argument to
+ 	constructor.  Changed method calls to use internal Interpreter
+ 	object.  Added method comments.
+
+	* Goal.java: Added interpreter argument to constructor.  Changed
+ 	method calls to use internal Interpreter object.
+
+	* Functions.java: Added Intrepeter member and accessor.  Changed
+ 	method calls to use internal Interpreter object.
+
+	* SystemFunctions.java: Added interpreter argument to constructor.
+  	Changed method calls to use internal Interpreter object.
+
+	* SimpleAction.java: Added Intrepeter member.  Added interpreter
+ 	argument to constructor.  Changed method calls to use internal
+ 	Interpreter object.
+
+	* PostAction.java: Added Intrepeter member.  Added interpreter
+ 	argument to constructor.  Changed method calls to use internal
+ 	Interpreter object.  Added method comments.
+
+	* FunctionCall.java: Added explicit "protected" modified to
+ 	members.  Removed two unused constructors.  Removed init method
+ 	because it is now unnecessary with the removal of two of the three
+ 	constructors that was using it.  Changed method calls to use
+ 	internal Interpreter object rather than using old static access
+ 	method.  Added method comments.
+
+	* SymbolTable.java: Added method comments.
+
+	* Table.java: Added and modified method comments.
+
+	* WorldModelTableBucketEnumerator.java: Removed static modified
+ 	from relation member.  Added method comments.
+
+	* Symbol.java: Removed default construct.  Added method comments.
+
+	* TableObject.java: Added method comments.
+
+	* JAM.java: Removed static Interpreter member and accessors and
+ 	moved Interpreter object to a local variable within the "main"
+ 	method.  Modified version number to Version 0.60 + 0.80i.
+
+	* AchieveGoalAction.java: Modified super invocation to include
+ 	Interpreter object.  Added method comments.
+
+	* QueryGoalAction.java: Modified super invocation to include
+ 	Interpreter object.  Added method comments.
+
+	* PerformGoalAction.java: Modified super invocation to include
+ 	Interpreter object.  Added method comments.
+
+	* MaintainGoalAction.java: Modified super invocation to include
+ 	Interpreter object.  Added method comments.
+
+	* GoalAction.java: Added Interpreter member.  Added method
+ 	comments and removed two apparently unused constructors.
+
+	* WorldModelTable.java: Added Interpreter member and modified all
+ 	old Interpreter references to the internal object.  Added method
+ 	comments.
+
+	* WorldModelRelation.java: Added method comments and removed two
+ 	apparently unused constructors.
+
+	* Relation.java: Added Interpreter member and modified all old
+ 	Interpreter references to the internal object.  Moved static
+ 	symbol table to the Interpreter class since it was an agent-wide
+ 	construct anyway. Removed writeObject and readObject methods as
+ 	these won't be necessary with the removal of the static symbol
+ 	table.  Also added method comments.
+
+	* JAMParser.jj: Modified/added comments.  Modified many blocks to
+ 	include an Interpreter object.  Modified version number to Version
+ 	0.60 + 0.80i.
+
+	* UserFunctions.java: Added Interpreter member.
+
+	* IntentionStructure.java: Added Interpreter member and accessors
+ 	and modified all old Interpreter references to refer to the
+ 	internal object.
+
+	* IntentionStructure.java: Added fix for abandoned (i.e.,
+ 	UNPOSTed) goals.
+
+	* Interpreter.java: Added runtime statistics gathering for the
+ 	number of APLs generated, number of null APLs generated, number of
+ 	goals added to the Intention Structure, and number of cycles
+ 	through the interpreter during the run.  Also added a simple
+ 	printout at the end of the run that displays the final values.
+	
+	* Interpreter.java: Removed static field modifiers from all
+ 	members and accessors to facilitate creating multiple Jam agents
+ 	within the same Java Virtual Machine (JVM).  Also moved the
+ 	Relation class' symbol table (for relations) to this class for the
+ 	same reason.  These changes forced the modification of a large
+ 	number of methods and constructors to include the Interpreter as
+ 	an argument for accessing the World Model, Plan Library, etc.
+
+	* ObjectAction.java: Added capability to invoke class methods on
+ 	actual object instances from Jam plans (prior to this only methods
+ 	not requiring an object instance was supported).  Thanks to
+ 	Cherilyn Michaels for pointing out a bug I had that was preventing
+ 	this development.  The current syntax for this is
+
+	EXECUTE <class path>.<method name>[<object reference>] <argument_list>;
+
+	I'm open to suggestions for a better syntax.
+
+
+1998-10-09  marcush  <marcush@irs.home.com>
+
+	* WorldModelAction.java: Removed an anachronistic field and
+ 	constructor and removed the same from all derived classes.
+
+	* APL.java: Modified references to agent's Intention Structure and
+	World Model from Interpreter accessors to function arguments.
+
+
+1998-10-02  marcush  <marcush@irs.home.com>
+
+	* PrimitiveAction.java: Defined an interface to which primitive
+	actions can be written.  This removes the need to intrude into JAM
+	source code (e.g., UserFunctions.java, which will be removed
+	eventually in favor of this new mechanism).  New primitive
+	functions can be added by defining classes implementing the
+	PrimitiveFunction interface and placed anywhere they're accessible
+	through the CLASSPATH variable.  This also facilitates separation
+	of application-specific code and JAM source code.  All primitive
+	functions previously implemented in UserFunctions.java have now
+	been defined using the new mechanism and are located in the
+	'primitives' subdirectory of the primary JAM source code
+	directory.
+
+	* ObjectAction.java: Added support for PrimitiveAction-based
+	primitive functions.
+
+	* JAMParser.jj: Changed parser to ignore the case of top-level
+ 	construct specifiers and plan fields.  I.e., "FACTS:", "GOALS:",
+	"OBSERVER" and "Plan" can now all be specified in any case (e.g.,
+	"Facts:", "goals:", "context:", "Documentation:").
+
+
+1998-07-23  marcush  <marcush@irs.home.com>
+
+	* JAMParser.jj: Modified the condition_list construct to use
+ 	append rather than insert so that context and precondition terms
+ 	end up in the order in which they appear in the plan rather than
+ 	in the reverse order.
+
+
+1998-07-14  marcush  <marcush@irs.home.com>
+
+	* UserFunctions.java: Added "exec", "exit", "checkpointAgent", and
+	"checkpointAgentToFile" functions.
+
+	* JAMParser.jj: Modified copyright notice.  Fixed parser warning
+ 	concerning definition of FLOAT.  Extended CLASS_IDENTIFIER to deal
+ 	with Java class paths. Modified EXECUTE sections in an attempt to
+ 	support method calls on instantiated objects within plans.
+
+
+Sat May 09 11:34:39  Marcus J. Huber  <marcush@irs.home.com>
+
+	* ALL: Moved all files to package (and directory structure)
+ 	com.irs.jam.
+
+	* ALL: Made all Jam classes serializable for mobility.
+
+	* FunctionCall.java: Fixed a bug where there was a double check
+ 	for system functions rather than a check for system functions and
+ 	then a check for user functions.
+
+	* Value.java: Changed all constructors to be public.
+
+	* Relation.java: Added writeObject() and readObject() methods to
+ 	support serialization and deserialization of the static symbol
+ 	table.
+
+	* JAM.java: Made default construct public so that deserializing
+ 	mobility "server" can create a JAM object.  Added setInterpreter()
+ 	method.  Added run() method as an entry point for deserialized
+ 	agents.
+
+	* Interpreter.java: Changed constructor to public for
+ 	deserialization.  Added setX() methods to set all members.  Added
+ 	getObserver() method.
+
+
+Wed Apr 22 09:57:58 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* All files: Moved Jam classes into the "jam" package.
+
+	* SystemFunctions.java: Added parseString primitive.  Added
+	simple socket-based interagent communication primitives.
+
+	* SimpleAction.java: Changed debugging statement for unknown
+ 	primitive actions.
+
+	* JAMParser.jj: Made changes to accomodate multiple parsing passes
+ 	and string parsing.
+
+	* JAM.java: Added _interpreter member and accessor.  Modified
+	command-line argument passing to correctly deal with arguments
+	(e.g., -s, -g).  Added command-line parse-string option (-p) so
+	that Jam specifications can be passed in.
+
+
+Wed Mar 25 16:38:38 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* IntentionStructure.java: Fixed a recently introduced bug in
+ 	renewLeafGoals that was skipping ACTIVE goals and changed it to
+ 	not renew leaf goals that already have an intention.
+
+
+Tue Mar 24 18:53:11 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* Binding.java: Added copy() and getBindingValues() member
+ 	functions.
+
+	* Relation.java: Target binding was being lost outside of unify()
+ 	function so modified simple assignment of dstBindingCopy to
+ 	dstBinding to perform actual modification of dstBinding using
+ 	copy() function.
+
+	* PlanRuntimeGoalState.java: Added support for EFFECTS execution.
+  	Modified execute() function to call addUnique() w/ input binding
+ 	as parameter instead of null during subgoaling.  Modified debug
+ 	printout to be more verbose.
+
+	* BindingValue.java: Removed BindingValue(Variable var, Binding b)
+	constructor.  Added copy constructor.
+
+	* JAMParser.jj: Modified agent_components to look for 0 or more
+ 	Observer bodies.  Modified some printouts.
+
+	* APL.java: Added metalevel parameter to constructor and support
+	functions (genWMBasedAPL and genGoalBasedAPL).  Modified
+	genGoalBasedAPL to bypass MAINTAIN goals if metalevel >1 to remove
+	infinite APL generation.  Added a new debug output.
+
+	* Interpreter.java: Modified loop for metalevel reasoning.
+
+	* SystemFunctions.java: Added following actions implementations:
+
+ 	    o selectRandomAPLElement(in APL, out APLElememnt) - picks a
+	      random APLELement from the passed in APL.
+	    o intendAPLElement(in APLElement) - adds the APLElement to the
+	      agent's Intention Structure.
+	    o getAPLElement(in APL, in num, out APLElement) - returns the
+	      "num"th APLElement in the APL.
+	    o printAPL(in APL) - prints APL information to stdout
+	      (System.out).
+ 	    o printAPLElement(in APLElement) - prints APLElement
+	      information to stdout (System.out).
+ 	    o getAttributeValue(in APLElement, in String, out double) -
+	      accesses the APLElement's plan for the specified attribute
+	      label and returns the associated value as a double.
+
+	* ValueReal.java: Added ValueReal(float) constructor.
+
+	* WorldModelTable.java: Modified debug output.
+
+	* RetractAction.java, AssertAction.java, UpdateAction.java:
+ 	Removed debug output statement (redundant w/ world model functions
+ 	that implement actions)
+
+
+Thu Mar 19 19:19:22 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* Goal.java: Added format() member function.
+
+	* Action.java, all *Action.java, and all PlanRuntime*.java files:
+ 	Added current goal as a parameter to the execute() member
+ 	function.
+
+	* Plan.java: Added _attributes field to plan to hold plan
+ 	characteristics.  Added print() member function.
+
+	* JAMParser.jj: Added ATTRIBUTES field to plans to facilitate
+ 	metalevel reasoning.
+
+	* Value.java, Value*.java and many other files: Added support for
+ 	creating and passing arbitrary objects in variables.  Added
+ 	VAL_OBJECT constant, getObject() member function, and objEq() and
+ 	objNe() member functions.
+
+	* ValueObject.java: Created class file.
+
+	* Makefile: Added ValueObject.class to target list.
+
+	* SystemFunctions.java: Added current goal to arguments of
+ 	execute() function.  Added metalevel and output actions of
+ 	getCurrentGoal, printGoal, getCurrentPlan, printPlan, and
+ 	getPlanAttributes.  Changed organization of primitive definitions
+ 	a bit.
+
+
+Thu Mar  5 20:20:24 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* APL.java: Added data-driven behavior capability to agents.
+  	Plans can now have a CONCLUDE: specification that instructs the
+ 	interpreter to look for World Model changes related to a
+ 	particular relation (which can be constrained by the PRECONDITION
+ 	and CONTEXT, of course). No goal is necessary to invoke these
+ 	plans - a "holder" goal is dynamically constructed by the
+ 	interpreter.  The APL constructor was decomposed into two primary
+ 	function calls, one for goal-based and and one for data-based APL
+ 	element creation.  Two functions, genGoalBasedAPL()
+ 	andgenWMBasedAPL() were implemented to support this.  Also added
+ 	comments and changed quite a few of the debug printouts.
+
+	Plan example:
+	     Plan: {
+	     NAME:
+		 "Test CONCLUDE specification"
+	     CONCLUDE:
+		 cycle_num $CYCLE_NUM;
+	     CONTEXT:
+		 RETRIEVE cycle_num $CYCLE_NUM;
+	     PRECONDITION:
+		 (== (% $CYCLE_NUM 125) 0);
+	     BODY:
+		 EXECUTE print "\nPerforming data-driven activity!\n";
+	     UTILITY: $CYCLE_NUM;
+	     }
+
+
+	* JAMParser.jj: Added support for data-driven plan specification
+ 	of CONCLUDE: field.
+
+	* Plan.java: Added _concludeSpecification member to hold a World
+ 	Model relation to watch for during data-driven invocation of
+ 	behavior.  Also added accessor functions for the member.
+
+	* Many files: Added some safety checks to detect null Goal
+	goalActions introduced by CONCLUDE plans requiring "holder" goals
+	to be dynamically constructed by the interpreter.
+
+	* PlanRuntimeGoalState.java: Also added "JAM:" prefix to all
+ 	outputs to identify the source of the output lines.
+
+	* All files: Changed all outputs to stdout from stderr so that I
+ 	can more easily do regression analysis.
+
+
+Tue Mar  3 20:40:51 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* PlanConstruct.java: Added PLAN_WAIT constant.
+
+	* JAMParser.jj: Implemented WAIT construct and changed version
+ 	number.
+
+	* IntentionStructure.java: Added call to refreshPriorities before
+ 	sorting to make sure all of the utility values reflect current WM
+ 	entries.  Also added a null object safety check in the
+ 	refreshPriorities function.
+
+	* PlanWaitConstruct.java: Created file.
+
+	* PlanRuntimeWaitState.java: Created file.
+
+	* Makefile: Changed target to include PlanWaitConstruct and
+ 	PlanRuntimeWaitState instead of WaitGoalAction.
+
+
+Wed Feb 25 17:47:49 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* IntentionStructure.java: Moved a printout to within a debug
+ 	wrapper.
+
+	* PlanRuntimeBranchState.java: Reverted back to non-deterministic
+ 	implementation.
+
+	* PlanRuntimeDoAllState.java: Finished implementing construct
+	(essentially a non-deterministic version of AND).
+
+	* PlanRuntimeDoAnyState.java: Finished implementing construct
+	(essentially a non-deterministic version of OR).
+
+Tue Feb 24 13:32:22 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* IntentionStructure.java: Added support for EFFECTS section of
+ 	plan. This section runs whenever a plan completes successfully.
+  	This is slightly modified from the submission from (and with much
+ 	thanks to) Chip McVey at Johns Hopkins University's Applied
+ 	Physics Lab for use as a POSTCONDITION section.
+
+	* Plan.java: Modified _effects member to PlanAtomicConstruct and
+	modified accessors to match.
+
+	* JAMParser.jj: Modified implementation of EFFECTS section
+	according to Chip McVey's POSTCONDITION implementation.
+
+	* Goal.java: Added executeEffects() member function.
+
+	* ObjectAction.java: Fixed problem with Object creation caused by
+	changing Values to use longs rather than ints.
+
+
+Sun Feb 22 20:11:10 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* *Action.java: Removed old getType() member function.
+
+	* IntentionStructure.java: Fixed addUnique() so that it properly
+	evaluates goal arguments to constants for POSTed goals.
+
+	* Relation.java: Modified evalArgs() to modify the _args member.
+
+	* ExpList.java: Cleaned up explistEval().
+
+Sun Feb 15 11:31:20 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* Many files: Added many switchable debug statements.
+
+	* APL.java: Made modifications to support MAINTAIN goal
+	semantics.
+
+	* SystemFunctions.java: Added new "getTime" primitive function,
+	which returns the value returned by Date.getTime();
+
+	* IntentionStructure.java: Made modifications to support MAINTAIN
+	goal semantics.
+
+	* Value.java: Changed the ValueInteger class to ValueLong so that
+ 	the default Jam! integer datatype is "wide".  Changed all Value
+ 	classes to reflect this change and modified all files that made
+	calls to getInt() to the new getLong().  Changed VAL_INT to
+	VAL_LONG everywhere.
+
+
+Fri Feb 13 15:10:52 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* UnpostAction.java: Implemented execute() member function.
+
+	* PostAction.java: Implemented execute() member function.
+
+	* SystemFunctions.java: Changed primitive function names from
+	print_world_model and print_intention_structure to printWorldModel
+	and printIntentionStructure, respectively.
+
+
+Fri Feb  6 15:50:35 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* Makefile: Added PerformGoalAction.class to target list.
+
+	* Action.java: Added ACT_PERFORM and ACT_OBJECT constants
+
+	* Action.java: Changed the getType() accessor to default to
+	returning _actType rather than ACT_UNDEFINED.
+
+	* *Action.java: Changed all constructors to set the_actType member
+ 	correctly.
+
+	* JAMParser.jj: Added PERFORM goal parsing support.
+
+	* PlanRuntimeGoalState.java: Changed ACHIEVE semantics to assert
+ 	the goal onto the world model to indicate the new state.  Also
+ 	added check to detect if an ACHIEVE subgoal goal was already, or
+ 	perhaps opportunistically, achieved.
+
+	* IntentionStructure.java: Added check to detect if a top-level
+ 	ACHIEVE goal was already, or perhaps opportunistically, achieved.
+
+
+Thu Feb  5 22:54:08 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* APL.java: Changed all the random functions to use absolute
+	values.
+
+	* PlanRuntimeBranchState.java: Changed branch execution to be
+	non-deterministic (i.e., a branch is chosen randomly and then
+	executed until it is complete or fails)
+
+
+Wed Feb  4 15:41:16 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* Many files: Started to fill in comments on member functions.
+
+	* JAMParser.jj: Added optional PRECONDITION field to all plans.
+
+	* Plan.java: Added _precondition member to Plan class to hold new
+	PRECONDITION expression.
+
+	* APL.java: Modified instantiate() method to check both context
+	and precondition during APL generation.
+
+	* SystemFunctions.java: Added string manipulation built-in
+ 	primitive functions "strlen", "first", "rest", and "last"
+ 	[Modified those submitted from (and with much thanks to) Chip
+ 	McVey at Johns Hopkins University's Applied Physics Lab]
+
+
+Sat Jan 27 13:27:31 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* All files: Modified copyright statements from 97 to 97-98.
+
+
+Sat Jan 24 14:48:39 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* ObjectAction.java: Added functionality to execute an object's
+ 	methods directly from a plan.  Programmers can now easily re-use
+ 	Java classes without having to re-code them in the
+ 	UserFunctions.java file (this still must be done for non object
+ 	functions).  Note that this only works for member functions that
+	do not need an object reference (e.g., static methods).
+
+	* JAMParser.jj: Added parsing of 1st-class object member functions
+ 	for EXECUTE actions in the form:
+
+		EXECUTE Class.MemberFunction <arglist>
+
+	* Makefile (ALL_CLASS): Added ObjectAction.java.
+
+	* Makefile (ALL_CLASS): Removed Test.java from default Jam!
+ 	distribution.
+
+
+Tue Jan 20 17:06:44 1998  Marcus J. Huber  <marcush@inetworld.net>
+
+	* JAMParser.jj: Added parsing of "Observer" body.
+
+	* IntentionStructure.java: Added executePlan(Plan plan) member
+	function, for general-purpose execution of a plan outside of the
+	interpreter.
+
+	* Interpreter.java: Added _observer member and "Observer" cyclic
+ 	functionality invocation.
+	
+
+Sat Nov 29 18:35:32 1997  Marcus J. Huber  <marcush@inetworld.net>
+
+	* FAILURE section of Plans now seems to work.  Had to fix some
+	failure-related areas (see below)
+
+	* Goal.java: Renamed new_execute() to executeFailure()
+
+	* IntentionStructure.java: Changed removeGoal to do its own search
+	through the intention stacks.  The old version just looked at the
+	top-level goal of each stack.  Also revised and added a few
+	comments.
+
+	* Modified the version number in the headers from 0.95 to 1.0
+
+	* SystemFunctions.java: Added error messages when arity of
+	primitive functions was incorrect.
+
+	* ex6.jam: Added plan failure test case.
+
+
+Fri Nov 21 08:42:49 1997  Marcus J. Huber  <marcush@inetworld.net>
+
+	* SystemFunctions.java: Added setShowX() primitive functions for
+ 	the World Model, Goal List, APL, and Intention Structure.
+	
+	* JAM.java: Added setShowX(boolean flag) member functions for the
+ 	World Model, Goal List, APL, and Intention Structure so that plan
+ 	primitives can turn the flags on and off during plan execution
+ 	time.
+
+
+Thu Nov 20 21:09:23 1997  Marcus J. Huber  <marcush@inetworld.net>
+
+	* SystemFunctions.java: Added %, mod, abs, &&, ||, and ! functions.
+	
+
+Thu Nov 18 21:07:46 1997  Marcus J. Huber  <marcush@inetworld.net>
+
+	* SystemFunctions.java: Added <, <=, >, >= conditional functions.
+
+
+Fri Nov 14 16:01:17 1997  Marcus J. Huber  <marcush@inetworld.net>
+
+	* APL.java: Fixed bug where goal arguments were not getting passed
+ 	through to plans correctly.
+	
+
+Tue Nov 11 22:41:52 1997  Jaeho Lee  <jaeho@knine.eecs.umich.edu>
+
+	* JAMParser.jj: Changed ParseError to ParseException.
+
+	
+Wed Oct 15 20:48:11 1997  Jaeho Lee  <jaeho@knine.eecs.umich.edu>
+
+	* Commented out all debugging print statements.
+
+	
+Tue Oct 14 20:26:31 1997  Jaeho Lee  <jaeho@knine.eecs.umich.edu>
+
+	* JAMParser.jj: A bug fix in the parser. /***/ was not parsed
+	correctly in the old grammar. 
+
+	
+Thu Oct  2 15:24:37 1997  Marcus J. Huber  <marcush@heron.eecs.umich.edu>
+
+	* Headers added to all files 
+
+
+Thu Sep 25 18:22:20 1997  Jaeho Lee  <jaeho@knine.eecs.umich.edu>
+
+	* JAMParser.jj: The following three JAVACODE's are added
+		void errorSkipTo(int kind)
+		String getMatchedText(Token start, Token end)
+		String getSpecialTokenText(Token t)
+
+	* JAMParser.jj: An improved comment and string handling code is
+	implemented.
+
+	* JAMParser.jj: The <FUNCTION_NAME> token was conflicting with
+	the <IDENTIFIER> token. It is now resolved.
+
+	
+Sat May 17 10:22:30 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* JAMParser.jj: Added DOALL and DOANY constructs.
+
+	* Added PlanDoAllConstruct, PlanDoAnyConstruct,
+	PlanRuntimeDoAnyState, and PlanRuntimeDoAllState classes.
+
+	* IntentionStructure.java (sortStacksByUtility): Added line to
+	force re-evaluation of a goal's intention context to update any
+	utility-related variables.
+
+
+Fri May 16 21:40:51 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* JAM.java: Created private init() member to set debug flag values
+	for both main() and constructors.
+
+	* JAMParser.jj: Added SIMULTANEOUS (threading) construct.
+
+	* PlanSimultaneousConstruct.java: Added default constructor to
+	support Parser.
+
+
+Thu May 15 22:33:22 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* TestAction.java: Constructor was not setting _expression member.
+
+	* SystemFunctions.java: Implemented initial versions of +, -, ==,
+	!=, and print_intention_structure.
+
+	* IntentionStructure.java: Renamed executeCycle() function to
+	executeObserver().
+
+	* APL.java: Fixed problem with trying to use negative random
+	numbers in index to array of applicable plans.
+
+
+Wed May 14 23:50:40 1997  Jaeho Lee  <jaeho@alleluia>
+
+	* WorldModelAction.java: A new class WorldModelAction is created.
+	This is the super class of all JAM primitive actions modifying the
+	JAM world model.
+
+	* DListEnumerator.java: getNext() has been removed. The standard
+	nextElement() function should be used. Other files are all fixed.
+
+	* JAMParser.jj: STRING token now does not include double quotes.
+
+	* Binding.java: Binding(SymbolTable symbolTable) is fixed
+	to assign BindingValue's to _bvalues.
+
+
+Tue May 13 18:21:31 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* PlanContext.java (check, confirm): Added check for null
+	contexts, where these functions now simply return true.
+
+	* RuntimeState files: Added prevGoal argument to all execute()
+	functions.
+	
+
+Mon May 12 20:46:29 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* JAMParser.jj: ExpList changed to build list using append rather
+	than insert(), which created list backwards.
+
+	* Modified various files to utilize Jaeho's revised Value
+	classes and definitions.
+
+	* Fixed a few spots where the runtime status of goals was not
+	being set correctly.
+
+	* IntentionStructure.java: addUnique() function modified to
+	correctly add goal as a subgoal rather than always adding as a
+	top-level goal.
+
+	
+Mon May 11 05:52:31 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* AssertAction.java: constructor wasn't setting _relation member.
+
+	* UserFunctions.java: Added 'fail' primitive function.
+
+	* SystemFunctions.java: Added 'print_world_model' primitive
+	function.
+
+	* PlanRuntimeSequenceState, PlanRuntimeBranchState,
+	PlanRuntimeGoalState, PlanRuntimeSimpleState: Runtime state was
+	being set according too deeply - the first sub-construct of the
+	first construct - rather than the first construct.
+
+	* IntentionStructure: Modified intend() to only set intention of
+	goal if the goal doesn't already have an intention.
+	
+	* SimpleAction.java: Modified to use Value.UNDEFINED as flag that
+	function wasn't found in UserFunctions or SystemFunctions, rather
+	than explicit argument.
+
+	* Functions.java: Removed foundP flag from argument list of
+	execute member function.  Value.UNDEFINED now used for same
+	purpose.
+
+
+Tue May	 6 19:16:13 1997  Jaeho Lee  <jaeho@alleluia>
+
+	* JAMParser.jj: value() rule constructs Value() directly instead of
+	ValueInteger, ValueReal, ValueString
+
+
+Sat May	 3 03:53:08 1997  Jaeho Lee  <jaeho@alleluia>
+
+	* Value.java: isTrue() checks if _rep is null to avoid NullException
+	
+	* Value.java: getType() returns EXP_VALUE correctly instead of
+	the incorrect VAL_UNDEF
+
+	* Makefile: Combined two Makefiles -- Parser and Jam -- into one
+
+	
+Sun Apr 13 19:51:57 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* PlanContext.java: Modified check() to use BindingList rather
+	than DList.
+
+	* Value.java: Added remaining missing functionality.
+
+	* Plan.java: Modified checkContext to use BindingList rather than
+	DList.
+
+	* APL.java: Modified instantiate() to use BindingList rather than
+	native DList.
+
+	* PredicateFact.java: Initial implementation.
+
+	* PredicateAchieve.java: Initial implementation.
+
+	* PredicateRetrieve.java: Initial implementation.
+
+	* Predicate.java: Initial implementation.
+
+	* Interpreter.java: Implemented parse member function.
+
+	* JAM.java: Revised to integrate with new JavaCC-based parser.
+
+
+Sun Apr 12 20:03:19 1997  Marcus Huber	<marcush@inetworld.net>
+
+	* PlanSimpleConstruct.java: Finished implementation of
+	newRuntimeState().
+
+	* IntentionStructure.java: Implemented removeGoal() member
+	function.
+
+	* Goal.java: Modified how Intention Structure goal removal is done
+	- now call removeGoal() member function of IntentionStructure.
+
+	* ConditionListEnumerator.java: Implemented.
+
+	* WorldModelTableBucketEnumerator.java: Implemented.
+
+	* SymbolTable.java: Added removeThis() function.
+
+	* RelationCondition.java: Redefined check() to use BindingList
+	rather than DList.
+
+	* Condition.java: Redefined check() to use BindingList rather than
+	DList.
+
+	* FactCondition.java: Modified check() to use BindingList rather
+	than DList.
+
+	* RetractAction.java: Implemented execute().
+
+	* RetrieveAction.java: Implemented execute().
+
+	* RetrieveCondition.java: Finished implementation and modified to
+	use BindingList for argument rather than DList.
+
+	* UpdateAction.java: Implemented execute().
+
+	* WorldModelTable.java: Implemented match and retract().

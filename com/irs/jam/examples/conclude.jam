@@ -1,0 +1,334 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exI.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test plans with CONCLUDE specifications (i.e.,
+//                      data-driven) intermixed with standard goal-driven
+//                      behavior (both ACHIEVE and MAINTAIN).
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:10 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+//
+//
+//
+// Note that the goals, plans, and facts are mixed throughout
+// the file.  There's nothing wrong with this.  It's just the
+// first example of these example JAM files that exhibits this feature of
+// the JAM parser.
+//
+// The overall behavior of this example is that the agent will start
+// working on the top-level goal and then notice every 125 cycles that
+// the CONCLUDE spec. is met and will exhibit some data-driven behavior.
+// The goal will be suspended temporarily because the utility of the
+// data-driven plan is higher than the goal-driven on.
+//
+// The MAINTAIN goal state will be undone four times before the agent
+// removes that goal and exits.
+//
+//
+
+FACTS:
+    FACT cycle_num  0;
+    FACT lastTime 0;
+    FACT goal_resets 0;
+
+OBSERVER:
+{
+    RETRIEVE cycle_num $CYCLE_NUM;
+//    EXECUTE print $CYCLE_NUM " ";
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+/*
+    WHEN : TEST (== $CYCLE_NUM 0) {
+//	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowAPL 1;
+	EXECUTE setShowGoalList 1;
+//	EXECUTE setShowIntentionStructure 1;
+    };
+*/
+    RETRIEVE goal_resets $RESETS; 
+    RETRIEVE lastTime $LASTTIME; 
+    EXECUTE getTime $TIME;
+
+    // Uncomment to cause periodically re-achievement of the goal
+    // (every 5 seconds)
+    WHEN : TEST (> (- $TIME $LASTTIME) 1000) {
+	EXECUTE print "\nRetracting MAINTAIN state.\n";
+	RETRACT goal_test 2.2 "Two" 2;
+        UPDATE (lastTime) (lastTime $TIME);
+        UPDATE (goal_resets) (goal_resets (+ 1 $RESETS));
+	EXECUTE print "CYCLE: Intention Structure is now:\n";
+	EXECUTE printIntentionStructure;
+	EXECUTE print "CYCLE: World Model is now:\n";
+	EXECUTE printWorldModel;
+    };
+
+    // Limit the test to 3 resets
+    RETRIEVE goal_resets $RESETS; 
+    WHEN : TEST (== $RESETS 4) {
+	 UNPOST MAINTAIN goal_test 2.2 "Two" 2;
+    };
+}
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Test CONCLUDE specification"
+DOCUMENTATION:
+    "This plan will be continuously tested because of its reference to
+    the cycle_num World Model entry. Every 125 cycles it be included in
+    an APL."
+CONCLUDE:
+    cycle_num $CYCLE_NUM;
+CONTEXT:
+    RETRIEVE cycle_num $CYCLE_NUM;
+PRECONDITION:
+    (== (% $CYCLE_NUM 1000) 0);
+BODY:
+    EXECUTE print "\nPerforming data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+    EXECUTE print "Performing data-driven activity at cycle number " $CYCLE_NUM "!\n";
+
+UTILITY: $CYCLE_NUM;
+}
+
+//
+//
+//
+
+GOALS:
+    ACHIEVE printing_done "goal1";
+
+//
+//
+//
+
+FACTS:
+    FACT initialized "False";
+    FACT test_done "False";
+    FACT count 0;
+    FACT communicated "a" 1 2.0;
+
+//
+//
+//
+
+Plan: {
+NAME:
+	"Test Argument Passing"
+DOCUMENTATION:
+	"Test Argument Passing"
+GOAL:
+	ACHIEVE printing_done $TEXT;
+CONTEXT:
+	FACT test_done "False";
+	RETRIEVE test_done $abc;
+	(< 1 2);
+BODY:
+
+	ASSIGN $VALUE 0;
+
+	WHILE : TEST (<= $VALUE 5)
+	{
+	    EXECUTE print "\n" $TEXT ":" $VALUE "\t";
+	    ASSIGN $VALUE (+ $VALUE 1);
+
+	    ASSIGN $LOOP 9;
+	    DO 
+	    {
+		EXECUTE print $LOOP "\t";
+		ASSIGN $LOOP (- $LOOP 1);
+	    } WHILE : TEST (> $LOOP 5);
+
+	    ASSIGN $LOOP 9;
+	    WHILE : TEST (> $LOOP 5)
+	    {
+		EXECUTE print $LOOP "\t";
+		ASSIGN $LOOP (- $LOOP 1);
+	    };
+
+	};
+
+	EXECUTE print "\n" $TEXT ": Done with loop\n" $TEXT ":";
+
+	DO
+	{
+	    EXECUTE print $VALUE "\t";
+	    ASSIGN $VALUE (- $VALUE 1);
+	}
+	WHILE : TEST (> $VALUE 0);
+
+	ACHIEVE communicated "First";
+	ACHIEVE indirect_communicated "Second";
+	ACHIEVE communicated $TEXT;
+	ACHIEVE indirect_communicated (+ $TEXT "+" "Third");
+
+	OR
+	{
+	    EXECUTE print "\nJAM\n";
+	};
+
+	OR
+	{
+		AND
+		{	
+			AND
+			{ ACHIEVE communicated "Hello"; }
+			{ ACHIEVE communicated "there."; }
+			;
+		}
+		{
+			AND
+			{ ACHIEVE communicated "This is"; }
+			{ ACHIEVE communicated "a test."; }
+			;
+		}
+		{
+			RETRIEVE test_done $DONE_YET;
+			TEST (== $DONE_YET "True");
+		};
+	}
+	{ 
+		AND
+		{	
+			EXECUTE print "A branch.\n"; 
+		}
+		{
+			EXECUTE print "Another branch.\n"; 
+		};
+	};
+
+}
+
+//
+//
+//
+
+Plan: {
+NAME:
+	"Communicate with the outside world"
+GOAL:
+	ACHIEVE communicated $TEXT;
+BODY:
+    EXECUTE print $TEXT "\n";
+}
+
+//
+//
+//
+
+Plan: {
+NAME:
+	"Communicate with the outside world using a helper goal"
+GOAL:
+	ACHIEVE indirect_communicated $TEXT;
+BODY:
+    ACHIEVE communicated $TEXT;
+}
+
+//
+//
+//
+
+GOALS:
+    MAINTAIN goal_test 2.2 "Two" 2;
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Test MAINTAIN"
+GOAL:
+    ACHIEVE goal_test $FLOAT $TEXT $INT;
+CONTEXT:
+
+BODY:
+    EXECUTE print "\n\nRestoring MAINTAIN state, step 1!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 2!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 3!\n";
+//    POST ACHIEVE achieve_goal 9.9 "Nine" 9;
+//    ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+    POST ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+//    EXECUTE printIntentionStructure;
+    EXECUTE print "Restoring MAINTAIN state, step 4!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 5!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 6!\n";
+
+//UTILITY: 100;
+
+FAILURE:
+    EXECUTE print "`Test MAINTAIN' plan failed.\n";
+}
+
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Achieve goal state"
+GOAL:
+    ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+CONTEXT:
+
+BODY:
+    EXECUTE print "\n\nAchieving goal state of:\n";
+    EXECUTE print "goal_test " $FLOAT " " "\"" $TEXT "\" " $INT "\n";
+
+// Uncomment the next line to simulate "opportunistic" achievement of
+// the top-level goal before the agent's plan completes.
+
+//    ASSERT goal_test $FLOAT $TEXT $INT;
+
+    EXECUTE print "Achieving goal state, step 2!\n";
+
+UTILITY: 100;
+}

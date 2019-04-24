@@ -1,0 +1,92 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exA.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test string "list" manipulation primitives
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:40 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 4
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE JAM_test_done "JAM_test_done";
+
+FACTS:
+    FACT test_done "False";
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+
+Plan: {
+NAME:
+    "Test first-class objects"
+GOAL:
+    ACHIEVE JAM_test_done $goal_name;
+CONTEXT:
+    FACT test_done "False";
+BODY:
+    EXECUTE sleep 2;
+    ASSIGN $fs "abc def ghi";
+    EXECUTE strlen $fs $length;
+    EXECUTE print "\n\nlength of string: " $fs " is: " $length "\n";
+    EXECUTE first $fs $f;
+    EXECUTE print "first of " $fs " is: " $f "\n";
+    ASSIGN $f2 (first $fs);
+    EXECUTE print "first of " $fs " is: " $f2 "\n";
+    EXECUTE last $fs $l;
+    EXECUTE print "last of " $fs " is: " $l "\n";
+    ASSIGN $l2 (last $fs);
+    EXECUTE print "last of " $fs " is: " $l2 "\n";
+    EXECUTE rest $fs $r;
+    EXECUTE print "rest of " $fs " is: " $r "\n";
+    ASSIGN $r2 (rest $fs);
+    EXECUTE print "rest of " $fs " is: " $r2 "\n";
+    EXECUTE first $r $fa;
+    EXECUTE print "first of " $r " is: " $fa "\n";
+    EXECUTE rest $r $rr;
+    EXECUTE print "rest of " $r " is: " $rr "\n";
+}

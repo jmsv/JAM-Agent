@@ -1,0 +1,51 @@
+GOALS:
+    ACHIEVE testCompleted;
+
+FACTS:
+
+Plan: {
+NAME:
+    "Toplevel test"
+GOAL:
+    ACHIEVE testCompleted;
+BODY:
+    EXECUTE println "\nSleeping 2 secs";
+    EXECUTE sleep 2000;
+    EXECUTE println "\nInstigating data-driven activity";
+    ASSERT test_fact 1;
+    EXECUTE println "\nSleeping 2 secs";
+    EXECUTE sleep 2000;
+    EXECUTE println "\nInstigating data-driven activity";
+    ASSERT test_fact 2;
+    EXECUTE println "\nSleeping 2 secs";
+    EXECUTE sleep 2000;
+    EXECUTE println "\nInstigating data-driven activity";
+    ASSERT test_fact 3;
+    EXECUTE printIntentionStructure;
+    EXECUTE printWorldModel;
+UTILITY:
+    50;
+}
+
+Plan: {
+NAME:
+    "Test CONCLUDE specification#1"
+CONCLUDE:
+    test_fact $value;
+BODY:
+    EXECUTE println "\nPerforming data-driven activity#1";
+UTILITY:
+    2;
+}
+
+Plan: {
+NAME:
+    "Test CONCLUDE specification#2"
+CONCLUDE:
+    test_fact $value;
+BODY:
+    EXECUTE println "\nPerforming data-driven activity#2";
+UTILITY:
+    1;
+}
+

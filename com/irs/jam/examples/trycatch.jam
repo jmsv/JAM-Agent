@@ -1,0 +1,142 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex6.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Demonstrate subgoal retry idiom, where the agent will
+//                      try to perform a subgoal until it either succeeds or
+//                      a certain number of attempts have been made, using a
+//                      "try-catch" idiom that is robust in the face of
+//                      subgoal failure and a wrapping DO-WHILE loop that
+//                      provides the limited retry behavior.
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:43:28 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE JAM_test_done "JAM_test_done";
+
+FACTS:
+    FACT test_done "False";
+    FACT test_entry 1.0;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+
+Plan: {
+NAME:
+	"Test JAM"
+GOAL:
+	ACHIEVE JAM_test_done $goal_name;
+CONTEXT:
+	FACT test_done "False";
+BODY:
+//    EXECUTE setShowGoalList 1;
+//    EXECUTE setShowIntentionStructure 1;
+    EXECUTE print "First line.\n";
+    EXECUTE print "Second line.\n";
+    ACHIEVE first_level_subgoal;
+    EXECUTE print "Fourth line.\n";
+    EXECUTE print "Fifth line.\n";
+
+FAILURE:
+    EXECUTE print "Top-level plan failed!\n\n\n\n";
+}
+
+Plan: {
+NAME:
+	"Test subgoaling"
+GOAL:
+	ACHIEVE first_level_subgoal;
+BODY:
+    EXECUTE print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+
+    ASSIGN $TRY_SUBGOAL 0;
+    DO
+    {
+	EXECUTE print "Before OR\n";
+        OR
+	{
+	    EXECUTE print "Trying to ACHIEVE second_level_subgoal (already tried "
+		    $TRY_SUBGOAL " times).\n";
+	    ACHIEVE second_level_subgoal;
+	}
+	{
+	    EXECUTE print "$TRY_SUBGOAL = " $TRY_SUBGOAL " before ++\n";
+	    ASSIGN $TRY_SUBGOAL (+ $TRY_SUBGOAL 1);
+	    EXECUTE print "$TRY_SUBGOAL = " $TRY_SUBGOAL " after ++\n";
+        };
+	EXECUTE print "After OR\n";
+	
+    } WHILE : TEST (!= $TRY_SUBGOAL 5);
+
+    EXECUTE print "Had to try second_level_subgoal " $TRY_SUBGOAL " times\n";
+
+    EXECUTE print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+
+FAILURE:
+    EXECUTE print "First-level subgoal's plan failed!\n";
+
+}
+
+Plan: {
+NAME:
+	"Test deeper subgoaling"
+GOAL:
+	ACHIEVE second_level_subgoal;
+BODY:
+    EXECUTE print "11111111111111111111111111\n";
+
+    EXECUTE fail;
+    
+    EXECUTE print "22222222222222222222222222\n";
+
+
+FAILURE:
+    EXECUTE print "Second-level subgoal's plan failed!\n";
+
+}

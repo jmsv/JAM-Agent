@@ -1,0 +1,132 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exD.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test MAINTAIN goals
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:29 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:44 2001
+//  Update Count      : 4
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    MAINTAIN goal_test 2.2 "Two" 2;
+
+FACTS:
+    FACT fact1 "true";
+    FACT goal_test 2.2 "Two" 2;
+    FACT fact3 "false";
+    FACT lastTime 0;
+    FACT goal_resets 0;
+    FACT initialized "False";
+
+OBSERVER: {
+    RETRIEVE goal_resets $RESETS; 
+    RETRIEVE lastTime $LASTTIME; 
+    EXECUTE getTime $TIME;
+
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+
+    // Uncomment to cause periodically re-achievement of the goal
+    // (every 5 seconds)
+    WHEN : TEST (> (- $TIME $LASTTIME) 5000) {
+	EXECUTE print "\nRetracting MAINTAIN state.\n";
+	RETRACT goal_test 2.2 "Two" 2;
+        UPDATE (lastTime) (lastTime $TIME);
+        UPDATE (goal_resets) (goal_resets (+ 1 $RESETS));
+	EXECUTE print "CYCLE: Intention Structure is now:\n";
+	EXECUTE printIntentionStructure;
+	EXECUTE print "CYCLE: World Model is now:\n";
+	EXECUTE printWorldModel;
+    };
+
+    // Limit the test
+    RETRIEVE goal_resets $RESETS; 
+    WHEN : TEST (== $RESETS 3) {
+	 UNPOST MAINTAIN goal_test 2.2 "Two" 2;
+    };
+}
+
+
+Plan: {
+NAME:
+    "Test MAINTAIN"
+GOAL:
+    ACHIEVE goal_test $FLOAT $TEXT $INT;
+CONTEXT:
+
+BODY:
+    EXECUTE print "\n\nRestoring MAINTAIN state, step 1!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 2!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 3!\n";
+//    POST ACHIEVE achieve_goal 9.9 "Nine" 9;
+//    ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+    POST ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+//    EXECUTE printIntentionStructure;
+    EXECUTE print "Restoring MAINTAIN state, step 4!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 5!\n";
+    EXECUTE print "Restoring MAINTAIN state, step 6!\n";
+
+//UTILITY: 100;
+
+FAILURE:
+    EXECUTE print "`Test MAINTAIN' plan failed.\n";
+}
+
+
+Plan: {
+NAME:
+    "Achieve goal state"
+GOAL:
+    ACHIEVE achieve_goal $FLOAT $TEXT $INT;
+CONTEXT:
+
+BODY:
+    EXECUTE print "\n\nAchieving goal state of:\n";
+    EXECUTE print "goal_test " $FLOAT " " "\"" $TEXT "\" " $INT "\n";
+//    ASSERT goal_test $FLOAT $TEXT $INT;
+    EXECUTE print "Achieving goal state, step 2!\n";
+
+UTILITY: 100;
+}
+
+

@@ -1,0 +1,128 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex3.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Tests simple goal/plan argument passing, plan failure
+//                      and recovery, and variable scoping.
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:42:55 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////
+//
+// Plan 2 will fail the first time it is executed because the UPDATE
+// changes the world model entry and invalidates Plan 2' CONTEXT.  The
+// agent retries the top-level goal and this time Plan 2 and Plan 3 run
+// successfully.
+//
+// 
+
+GOALS:
+    ACHIEVE goal_test 0.0 "hi" 1;
+    ACHIEVE printing_done "hello" :UTILITY 3;
+
+FACTS:
+    FACT test_done "False";
+    FACT hello1 "False";
+    FACT hello2 0;
+    FACT hello3 "hey there";
+    FACT hello4 1.1;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+Plan: {
+NAME:
+	"Plan 1"
+GOAL:
+	ACHIEVE printing_done $TEXT;
+CONTEXT:
+	FACT test_done "False";
+BODY:
+	ASSIGN $VALUE 0;
+	EXECUTE print "\n$VALUE = " $VALUE "\n";
+	EXECUTE print "$TEXT = " $TEXT "\n";
+}
+
+Plan: {
+NAME:
+	"Plan 2"
+GOAL:
+	ACHIEVE goal_test $FLOAT $TEXT $INT;
+CONTEXT:
+	FACT test_done $WM_ENTRY;
+BODY:
+	ASSIGN $LOCAL_VALUE 0;
+	EXECUTE print "\n\n$LOCAL_VALUE = " $LOCAL_VALUE "\n";
+	EXECUTE print "$FLOAT = " $FLOAT "\n";
+	EXECUTE print "$TEXT = " $TEXT "\n";
+	EXECUTE print "$INT = " $INT "\n";
+	EXECUTE print "$WM_ENTRY = " $WM_ENTRY "\n";
+	UPDATE (test_done) (test_done "TRUE");
+	ACHIEVE subgoal $TEXT $INT $FLOAT;
+
+FAILURE:
+	EXECUTE print "Plan 2 failed!\n";
+}
+
+
+Plan: {
+NAME:
+	"Plan 3"
+GOAL:
+	ACHIEVE subgoal $TEXT $INT $FLOAT;
+CONTEXT:
+	FACT test_done $WM_ENTRY;
+BODY:
+	ASSIGN $LOCAL_VALUE 5;
+	EXECUTE print "\n\nSubgoal $LOCAL_VALUE = " $LOCAL_VALUE "\n";
+	EXECUTE print "Subgoal $FLOAT = " $FLOAT "\n";
+	EXECUTE print "Subgoal $TEXT = " $TEXT "\n";
+	EXECUTE print "Subgoal $INT = " $INT "\n";
+	EXECUTE print "Subgoal $WM_ENTRY = " $WM_ENTRY "\n";
+}

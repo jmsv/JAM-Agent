@@ -1,0 +1,282 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : exJ.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test handling of java Object from plans and
+//                      metalevel reasoning
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:44:54 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 4
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE a_goal "True";
+//    ACHIEVE objecthandling_tested 3 "Hello";
+
+FACTS:
+    FACT cycle_num  0;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE cycle_num $CYCLE_NUM;
+//    EXECUTE print $CYCLE_NUM " ";
+
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+}
+
+
+//
+//
+//
+
+Plan: {
+NAME:
+    "Achieve a goal, plan 1"
+GOAL:
+    ACHIEVE a_goal $STRING;
+ATTRIBUTES: "Cost 1.3 Size 50.6"
+BODY:
+    EXECUTE print "Achieving WAITed for goal 1, plan 1.\n";
+    EXECUTE print "Achieving WAITed for goal 2, plan 1.\n";
+    EXECUTE print "Achieving WAITed for goal 3, plan 1.\n";
+    EXECUTE print "Achieving WAITed for goal 4, plan 1.\n";
+    EXECUTE print "Achieving WAITed for goal 5, plan 1.\n";
+    EXECUTE print "Achieving WAITed for goal 6, plan 1.\n";
+}
+
+
+Plan: {
+NAME:
+    "Achieve a goal, plan 2"
+GOAL:
+    ACHIEVE a_goal $STRING;
+ATTRIBUTES: "Cost 10.5 Size 19.2"
+BODY:
+    EXECUTE print "Achieving WAITed for goal 1, plan 2.\n";
+    EXECUTE print "Achieving WAITed for goal 2, plan 2.\n";
+    EXECUTE print "Achieving WAITed for goal 3, plan 2.\n";
+    EXECUTE print "Achieving WAITed for goal 4, plan 2.\n";
+    EXECUTE print "Achieving WAITed for goal 5, plan 2.\n";
+    EXECUTE print "Achieving WAITed for goal 6, plan 2.\n";
+}
+
+
+Plan: {
+NAME:
+    "Test Object handling"
+DOCUMENTATION:
+    "Primary plan for test"
+ATTRIBUTES: "(Cost 1) (Size 10)"
+GOAL:
+    ACHIEVE objecthandling_tested $NUM $STRING;
+CONTEXT:
+    RETRIEVE cycle_num $CYCLE_NUM;
+BODY:
+/*
+    EXECUTE print "\nCurrent goal is:\n";
+    EXECUTE getCurrentGoal $GOAL;
+    EXECUTE printGoal $GOAL;
+*/
+    EXECUTE print "\nCurrent plan is:\n";
+    EXECUTE getCurrentPlan $PLAN;
+    EXECUTE printPlan $PLAN;
+    EXECUTE getPlanAttributes $PLAN $ATTRIBUTES;
+    EXECUTE print "\nCurrent plan's attributes are: \"" $ATTRIBUTES "\"\n";
+
+    ACHIEVE subgoal (+ $NUM 1) (+ $STRING " There");
+
+FAILURE:
+    EXECUTE print "\n\nTop-level plan failed!\n\n";
+}
+
+Plan: {
+NAME:
+    "subgoal"
+DOCUMENTATION:
+    "Subgoal for test"
+ATTRIBUTES: "(Cost 5) (Size 100)"
+GOAL:
+    ACHIEVE subgoal $NUM $STRING;
+BODY:
+    EXECUTE print "\nCurrent goal is (from subgoal):\n";
+    EXECUTE getCurrentGoal $GOAL;
+    EXECUTE printGoal $GOAL;
+
+    EXECUTE print "\nCurrent plan is (from subgoal):\n";
+    EXECUTE getCurrentPlan $PLAN;
+    EXECUTE printPlan $PLAN;
+
+
+    ASSERT plan $PLAN;
+    RETRIEVE plan $APLAN;
+    EXECUTE print "\n\nRetrieved plan is:\n";
+    EXECUTE printPlan $APLAN;
+    EXECUTE print "\n\n";
+
+
+    EXECUTE getPlanAttributes $PLAN $ATTRIBUTES;
+    EXECUTE print "\nCurrent plan's attributes are: \"" $ATTRIBUTES "\"\n";
+    EXECUTE first $ATTRIBUTES $ATTRIBUTE;
+    EXECUTE rest $ATTRIBUTES $REST;
+    EXECUTE first $REST $VALUE;
+    EXECUTE rest $REST $ATTRIBUTES;
+    EXECUTE print "\n\nFirst attribute:value pair is: " $ATTRIBUTE ":" $VALUE "\n";
+    EXECUTE first $ATTRIBUTES $ATTRIBUTE;
+    EXECUTE rest $ATTRIBUTES $REST;
+    EXECUTE first $REST $VALUE;
+    EXECUTE rest $REST $ATTRIBUTES;
+    EXECUTE print "\n\nSecond attribute:value pair is: " $ATTRIBUTE ":" $VALUE "\n";
+
+FAILURE:
+    EXECUTE print "\n\nSubgoal plan failed!\n\n";
+}
+
+
+Plan: {
+NAME:
+    "metalevel plan"
+DOCUMENTATION:
+    "Perform metalevel reasoning"
+CONCLUDE:
+    APL $LEVEL $APL $APLSIZE;
+CONTEXT:
+    (> $APLSIZE 1);
+/*
+    (|| (goalInAPL $APL "GoalX")
+        (goalInAPL $APL "GoalY"));
+    (&& (planInAPL $APL "PlanA")
+        (planInAPL $APL "PlanB"));
+*/
+BODY:
+
+    EXECUTE print "In metalevel plan!  APL is:\n";
+    EXECUTE printAPL $APL;
+
+    // Find lowest-cost element
+    ASSIGN $COUNT 1;
+    ASSIGN $LOWESTINDEX -1;
+    ASSIGN $LOWESTCOST 999999.0;
+    WHILE : TEST (<= $COUNT $APLSIZE)
+    {
+//	EXECUTE print "Count now: " $COUNT "\n";
+	EXECUTE getAPLElement $APL $COUNT $APLELEMENT;
+//	EXECUTE print "$APLELEMENT is: " $APLELEMENT "\n";
+	EXECUTE getAttributeValue $APLELEMENT "Size" $VALUE;
+
+	OR
+	{
+	    TEST (< $VALUE $LOWESTCOST);
+	    EXECUTE print "Found new lowest cost APL Element at #" $COUNT "\n";
+	    ASSIGN $LOWESTINDEX $COUNT;
+	    ASSIGN $LOWESTCOST $VALUE;
+        }
+	{
+	    EXECUTE print "APL Element at #" $COUNT " was not lowest cost.\n";
+        };
+
+	ASSIGN $COUNT (+ $COUNT 1);
+    };
+
+    OR
+    {
+        TEST (!= $LOWESTINDEX -1);
+	EXECUTE print "Lowest cost APL Element is #" $LOWESTINDEX "\n";
+	EXECUTE getAPLElement $APL $LOWESTINDEX $APLELEMENT;
+    }
+    {
+	// If no lowest-cost element then pick randomly
+	EXECUTE print "No lowest-cost element, picking randomly.\n";
+	EXECUTE selectRandomAPLElement $APL $APLELEMENT;
+    };
+
+    EXECUTE print "Intending APL Element:\n";
+    EXECUTE printAPLElement $APLELEMENT;
+    EXECUTE intendAPLElement $APLELEMENT;
+
+
+/* WORKS
+    // Select a plan from the APL randomly right now
+    EXECUTE print "Selecting random element.\n";
+    EXECUTE selectRandomAPLElement $APL $APLELEMENT;
+    EXECUTE print "Just before intending element.\n";
+    EXECUTE print "Intention Structure before is:\n";
+    EXECUTE printIntentionStructure;
+    EXECUTE intendAPLElement $APLELEMENT;
+
+
+    EXECUTE print "Just after intending element.\n";
+    EXECUTE print "Intention Structure after is:\n";
+    EXECUTE printIntentionStructure;
+*/
+
+/* OTHER POSSIBLE METALEVEL ACTIONS
+    // Pull out each of the goals
+    EXECUTE getAPLGoals $APL $GOAL_LIST;
+
+    // Decide which goal is most important
+    PERFORM pickGoal $APL $MOST_IMPORTANT_GOAL;
+
+    // Pull out the plans for that goal from the APL
+    EXECUTE getAPLPlans $APL $MOST_IMPORTANT_GOAL $PLAN_LIST;
+
+    // Decide which APL element is most important
+    PERFORM pickAPLElement $APL $MOST_IMPORTANT_APL_ELEMENT;
+
+    // Intend selected plan
+    EXECUTE intendAPLElement $MOST_IMPORTANT_APL_ELEMENT;
+*/
+
+EFFECTS:
+    EXECUTE print "In metalevel plan! Retracting WM entry for this level.\n";
+    RETRACT APL $LEVEL;
+    EXECUTE print "In metalevel plan! Retracting WM entry for previous level.\n";
+    RETRACT APL (- $LEVEL 1);
+
+UTILITY: 100;
+
+FAILURE:
+    EXECUTE print "\n\nMetalevel plan failed!\n\n";
+}

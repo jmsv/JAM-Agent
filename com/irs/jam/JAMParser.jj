@@ -1,0 +1,1703 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//
+//  $Id: JAMParser.jj,v 1.10 1998/11/04 17:39:27 marcush Exp marcush $
+//  $Source: C:\\com\\irs\\jam\\RCS\\JAMParser.jj,v $
+//
+//  File	      : JAMParser.jj
+//  Author(s)	      : Jaeho Lee <jaeho>
+//		      : Marc Huber <marcush@home.com>
+//
+//  Description	      : Parser for JAM agents
+//
+//  Original author(s): Jaeho Lee <jaeho>
+//  Created On	      : Wed Jan 29 10:11:08 1997
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Tue Nov 06 17:38:54 2001
+//  Update Count      : 975
+//
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997 Marcus J. Huber and Jaeho Lee.
+//  Copyright (C) 1997-2001 Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber, Jaeho Lee and Intelligent Reasoning Systems shall
+//  not be liable for any damages, including special, indirect,
+//  incidental, or consequential damages, with respect to any claim
+//  arising out of or in connection with the use of the software, even
+//  if they have been or are hereafter advised of the possibility of
+//  such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+options
+{
+	     STATIC = false;
+	  LOOKAHEAD = 1;
+       DEBUG_PARSER = false;
+    ERROR_REPORTING = true;
+ USER_TOKEN_MANAGER = false;
+   USER_CHAR_STREAM = false;
+JAVA_UNICODE_ESCAPE = false;
+      UNICODE_INPUT = false;
+}
+
+
+PARSER_BEGIN(JAMParser)
+
+package com.irs.jam;
+
+import java.io.*;
+import java.lang.reflect.*;
+
+public class JAMParser
+{
+  private static int _versionReal      = 65;
+  private static int _versionImaginary = 76;
+  private static String _versionDate = "[November, 2001]";
+  public String _filename = null;
+
+  public JAMParser()
+  {
+  }
+
+  /**
+   * Command-line interface to parser to facilitate testing.
+   *
+   */
+  public static void main(String args[])
+  {
+    JAMParser parser;
+    Interpreter interpreter = new Interpreter();
+
+    System.out.println("JAM Parser Version " + _versionReal + " + " +
+		       _versionImaginary + "i " + _versionDate + ": ");
+
+    if (args.length == 0) {
+      System.out.println("Reading from standard input . . .");
+      parser = new JAMParser(new java.io.DataInputStream(System.in));
+    }
+    else if (args.length == 1) {
+      System.out.println("Reading from file " + args[0] + " . . .");
+
+      try {
+	parser = new JAMParser(new java.io.DataInputStream(new java.io.FileInputStream(args[0])));
+	parser._filename = args[0];
+      } 
+      catch (java.io.FileNotFoundException e) {
+	System.out.println("\n\nFile " + args[0] + " not found!\n\n");
+	return;
+      }
+    }
+    else {
+      System.out.println("Usage is one of:");
+      System.out.println("\t java JAMParser < inputfile");
+      System.out.println("OR");
+      System.out.println("\t java JAMParser inputfile");
+      return;
+    }
+
+    try {
+      parser.ParseJamAgentDefinition(interpreter);
+      System.out.println("JAM program parsed successfully.");
+    }
+    catch (ParseException e) {
+      System.out.println("Encountered parsing exception " + e +
+			 " during parse.");
+      e.printStackTrace();
+    }
+    catch (Exception e) {
+      System.out.println("Encountered other exception " + e +
+			 " during parse.");
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Primary JAM interface to parser
+   *
+   */
+  public void buildInterpreter(String filename, String buf, Interpreter interpreter) throws ParseException
+  {
+    JAMParser parser;
+
+    System.out.println("JAM Parser Version " + _versionReal + " + " +
+		       _versionImaginary + "i: ");
+
+    parser = new JAMParser(new ByteArrayInputStream(buf.getBytes()));
+    parser._filename = filename;
+    parser.ParseJamAgentDefinition(interpreter);
+    System.out.println("JAM definition parse successful.");
+  }
+
+
+  /**
+   * Secondary JAM interface used to internalize agent constructs
+   * from strings during execution.
+   *
+   */
+  public void parseString(Interpreter interpreter, String filename, String buf)
+  {
+    JAMParser parser;
+
+    System.out.println("JAM Parser Version " + _versionReal + " + " +
+		       _versionImaginary + "i: ");
+
+    _filename = filename;
+    parser = new JAMParser(new ByteArrayInputStream(buf.getBytes()));
+
+    try {
+      Interpreter tmpI = parser.ParseJamAgentDefinition(interpreter);
+      System.out.println("JAM string parse successful.");
+    } 
+    catch (ParseException e) {
+      System.out.println("Encountered parse exception " + e +
+			 " during parse.");
+      e.printStackTrace();
+    }
+    catch (Exception e) {
+      System.out.println("Encountered other exception " + e +
+			 " during parse.");
+      e.printStackTrace();
+    }
+  }
+}
+
+PARSER_END(JAMParser)
+
+/* WHITE SPACE */
+
+SPECIAL_TOKEN :
+{
+  <WS: ([" ", "\t", "\n", "\r", "\f"])+ >
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" :	   IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]>   { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" :	   IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
+/* STRING */
+
+//	TOKEN :
+//	{
+//	< STRING:		"\"" ( ~["\"","\n"] | "\"\"" | "\\\"" )* "\"" >
+//	}
+
+SKIP:
+{
+   "\"" : IN_STRING
+}
+ 
+<IN_STRING>
+TOKEN :
+{
+  < STRING : "\"" > 
+    {
+	image.setLength(image.length() - 1);
+	matchedToken.image = image.toString();
+    } : DEFAULT 
+}
+ 
+<IN_STRING>
+MORE :
+{
+  "\\\"" { image.setLength(image.length() - 2); image.append("\""); }
+|
+  "\\t"	 { image.setLength(image.length() - 2); image.append("\t"); }
+|
+  "\\n"	 { image.setLength(image.length() - 2); image.append("\n"); }
+|
+  "\\r"	 { image.setLength(image.length() - 2); image.append("\r"); }
+|
+  "\\f"	 { image.setLength(image.length() - 2); image.append("\f"); }
+|
+   < ~[] >  // Note that here you don't need any action.
+}
+
+
+TOKEN :
+{
+< #ws:		( [" ","\t","\n","\r"] )+ >
+|
+< #delim:	[" ","\t","\n","\r"] >
+|
+< #letter:	( ["-","_","A"-"Z","a"-"z"] ) >
+|
+< #digit:	["0"-"9"] >
+|
+
+< #charac:	( "'" ~["'","\n"] "'") | ( "''''" ) >
+|
+
+< #EXP:		["e","E"] ( ["+","-"] )? ( <digit> )+ >
+|
+< #SIGN :	["-","+"] >
+|
+< #number0:	( <SIGN> )? ( <digit> )+ >
+|
+< #number1:	( <SIGN> )? ( <digit> )+ "." ( <digit> )* ( <EXP> )?  >
+|
+< #number2:	( <SIGN> )? "." ( <digit> )+ ( <EXP> )?	 >
+}
+
+
+TOKEN [IGNORE_CASE]:
+{
+< GOAL_DECL:		"GOALS" ( <delim> )* ":" >
+|
+< FACT_DECL:		"FACTS" ( <delim> )* ":" >
+|
+< OBSERVER_DECL:	"OBSERVER" ( <delim> )* ":" >
+|
+< PLAN_START:		"PLAN" ( <delim> )* ":" >
+|
+< PLAN_NAME:		"NAME" ( <delim> )* ":" >
+|
+< PLAN_DOC:		"DOCUMENTATION" ( <delim> )* ":" >
+|
+< PLAN_GOALSPEC:	"GOAL" ( <delim> )* ":" >
+|
+< PLAN_CONCLUDESPEC:	"CONCLUDE" ( <delim> )* ":" >
+|
+< PLAN_CONTEXT:		"CONTEXT" ( <delim> )* ":" >
+|
+< PLAN_PRECONDITION:	"PRECONDITION" ( <delim> )* ":" >
+|
+< PLAN_UTILITY:		"UTILITY" ( <delim> )* ":" >
+|
+< PLAN_EFFECTS:		"EFFECTS" ( <delim> )* ":"  >
+|
+< PLAN_FAILURE:		"FAILURE" ( <delim> )* ":" >
+|
+< PLAN_ATTRIBUTES:	"ATTRIBUTES" ( <delim> )* ":" >
+|
+< PLAN_BODY:		"BODY" ( <delim> )* ":" >
+}
+
+TOKEN :
+{
+< PLAN_BODY_AND:	"AND" >
+|
+< PLAN_BODY_OR:		"OR" >
+|
+< PLAN_BODY_PARALLEL:	"PARALLEL" >
+|
+< PLAN_BODY_DO_ALL:	"DO_ALL" >
+|
+< PLAN_BODY_DO_ANY:	"DO_ANY" >
+|
+< PLAN_BODY_DO:		"DO" >
+|
+< PLAN_BODY_WHILE:	"WHILE" >
+|
+< PLAN_BODY_WHEN:	"WHEN" >
+|
+< PLAN_BODY_ATOMIC:	"ATOMIC" >
+|
+< PLAN_BODY_WAIT:	"WAIT" >
+|
+< IF:			"IF" >
+|	 
+< ELSEIF:		"ELSEIF" >
+|	 
+< ELSE:			"ELSE" >
+|	 
+< KEYWORD_TEST:		":TEST" >
+|
+< KEYWORD_UTILITY:	":UTILITY" >
+|
+< KEYWORD_BY:		":BY" >
+|
+< KEYWORD_NOT_BY:	":NOT-BY" >
+|
+
+< EXECUTE:		"EXECUTE" >
+|
+< LOAD:			"LOAD" >
+|
+< PARSE:		"PARSE" >
+|
+< ASSIGN:		"ASSIGN" >
+|
+< FACT:			"FACT" >
+|
+< RETRIEVE:		"RETRIEVE" >
+|
+< RETRIEVEALL:		"RETRIEVEALL" >
+|
+< NEXTFACT:		"NEXTFACT" >
+|
+< TEST:			"TEST" >
+|
+< POST:			"POST" >
+|
+< UNPOST:		"UNPOST" >
+|
+< ACHIEVE:		"ACHIEVE" >
+|
+< PERFORM:		"PERFORM" >
+|
+< MAINTAIN:		"MAINTAIN" >
+|
+< QUERY:		"QUERY" >
+|
+< ASSERT:		"ASSERT" >
+|
+< SUCCEED:		"SUCCEED" >
+|
+< FAIL:			"FAIL" >
+|
+< RETRACT:		"RETRACT" >
+|
+< UPDATE:		"UPDATE" >
+|
+
+< INTEGER:		<number0> >
+|
+< FLOAT:		( <number1> | <number2> )+ >
+|
+< IDENTIFIER:		["_","A"-"Z","a"-"z"] ( <letter> | <digit> )* >
+|
+<CLASS_IDENTIFIER:	(<IDENTIFIER> ("." <IDENTIFIER>)*)+ >
+|
+< VARIABLE:		"$" ( <letter> | <digit> | "." )* >
+|
+< SPECIAL_FUNCTION_NAME:
+  ( "+"
+    | "-"
+    | "*"
+    | "/"
+    | "%"
+
+    | "=="
+    | "!="
+    | "<"
+    | "<="
+    | ">"
+    | ">="
+    | "&&"
+    | "||"
+    | "!"
+  ) >
+}
+
+//
+//
+//
+
+
+Interpreter ParseJamAgentDefinition(Interpreter interpreter) :
+{
+  if (interpreter == null)
+    interpreter = new Interpreter();
+}
+{
+  agent_components(interpreter)
+    {
+      return interpreter;
+    }
+}
+
+
+/**********************************************************************/
+/*								      */
+/*	Agent Components					      */
+/*								      */
+/**********************************************************************/
+
+void agent_components(Interpreter interpreter) :
+{}
+{
+  // Allow arbitrary interleaving of Goals, Plans, Facts, and Observer
+  (
+   <GOAL_DECL>
+   ( goal(interpreter) )*
+   |
+   <FACT_DECL>
+   ( fact(interpreter) )*
+   |
+   <PLAN_START>
+   ( plan(interpreter) )*
+   |
+   <OBSERVER_DECL>
+   (
+   {
+     Plan currentPlan = new Plan();
+     PlanSequenceConstruct body_elements = null;
+   }
+//     try {
+   "{" body_elements = plan_body_elements(currentPlan, interpreter) "}"
+   {
+     currentPlan.setBody(body_elements);
+     interpreter.setObserver(currentPlan);
+   }
+     )*
+    )+
+    }
+  
+/**********************************************************************/
+/*								      */
+/*	GOAL							      */
+/*								      */
+/**********************************************************************/
+  
+void goal(Interpreter interpreter) :
+{
+  GoalAction goal = null;
+}
+{
+  goal=goal_action(null, interpreter) ";"
+    {
+      interpreter.getIntentionStructure().addUnique(goal, null, null, null);
+    }
+}
+
+/**********************************************************************/
+/*								      */
+/*	FACT							      */
+/*								      */
+/**********************************************************************/
+  
+void fact(Interpreter interpreter) :
+{
+  Token cm;
+  Token id;
+  ExpList el;
+  Relation rel;
+}
+{
+  cm=<FACT> id=<IDENTIFIER> el=explist(null, interpreter) ";"
+    {
+      rel = new Relation(id.image, el, interpreter);
+      interpreter.getWorldModel().assert(rel, null);
+    }
+}
+
+/**********************************************************************/
+/*								      */
+/*	PLAN							      */
+/*								      */
+/**********************************************************************/
+  
+void plan(Interpreter interpreter) :
+{}
+{ 
+  {
+    Plan currentPlan = new Plan();
+  }
+  //  try {
+    "{" plan_components(currentPlan, interpreter) "}"
+      {
+	if (currentPlan.getGoalSpecification() != null) {
+	  interpreter.getPlanLibrary().add(currentPlan,
+					   ((GoalAction) currentPlan.getGoalSpecification()).getGoal().getName());
+	}
+	else {
+	  interpreter.getPlanLibrary().add(currentPlan,
+					   currentPlan.getConcludeSpecification().getName());
+	}
+      }
+} 
+  
+void plan_components(Plan currentPlan, Interpreter interpreter) :
+{}
+{ 
+  plan_component(currentPlan, interpreter) ( plan_component(currentPlan, interpreter) )*
+} 
+  
+void plan_component(Plan currentPlan, Interpreter interpreter) :
+{}
+{ 
+  plan_name(currentPlan)
+| plan_doc(currentPlan)
+| plan_goalspec(currentPlan, interpreter)
+| plan_concludespec(currentPlan, interpreter)
+| plan_context(currentPlan, interpreter)
+| plan_precondition(currentPlan, interpreter)
+| plan_utility(currentPlan, interpreter)
+| plan_effects(currentPlan, interpreter)
+| plan_failure(currentPlan, interpreter)
+| plan_attributes(currentPlan)
+| plan_body(currentPlan, interpreter)
+} 
+  
+  
+/****************/
+/* Name		*/
+/* Doc		*/
+/* Attributes	*/
+/****************/
+  
+void plan_name(Plan currentPlan) :
+{
+  Token t_s = null;
+}
+{ 
+  <PLAN_NAME> [ t_s=<STRING> ]
+    {
+      if (t_s != null)
+	currentPlan.setName(t_s.image);
+    }
+} 
+  
+  
+void plan_doc(Plan currentPlan) :
+{
+  Token t_s = null;
+}
+{ 
+  <PLAN_DOC> [ t_s=<STRING> ]
+    {
+      if (t_s != null)
+	currentPlan.setDocumentation(t_s.image);
+    }
+}
+  
+  
+void plan_attributes(Plan currentPlan) :
+{
+  Token t_s = null;
+}
+{ 
+  <PLAN_ATTRIBUTES> [ t_s=<STRING> ]
+    {
+      if (t_s != null)
+	currentPlan.setAttributes(t_s.image);
+    }
+}
+  
+  
+/**********************/
+/* Goal Specification */
+/**********************/
+  
+void plan_goalspec(Plan currentPlan, Interpreter interpreter) :
+{
+  Relation rel = null;
+  Action ga = null;
+}
+{ 
+ <PLAN_GOALSPEC> [ ga=goal_action(currentPlan, interpreter) ";" ]
+   {
+     if (ga != null) {
+       currentPlan.setGoalSpecification(ga);
+       currentPlan.setConcludeSpecification(rel);
+     }
+   }
+} 
+  
+  
+/*******************************/
+/* Plan Conclude Specification */
+/*******************************/
+  
+void plan_concludespec(Plan currentPlan, Interpreter interpreter) :
+{
+  Action ga = null;
+  Relation rel = null;
+}
+{ 
+ <PLAN_CONCLUDESPEC> [ rel=relation(currentPlan, interpreter) ";" ]
+   {
+     if (rel != null) {
+       currentPlan.setConcludeSpecification(rel);
+       currentPlan.setGoalSpecification(ga);
+     }
+   }
+} 
+  
+  
+/***********/
+/* Context */
+/***********/
+  
+void plan_context(Plan currentPlan, Interpreter interpreter) :
+{
+  ConditionList c = null;
+}
+{ 
+ <PLAN_CONTEXT> [ c=condition_list(currentPlan, interpreter) ]
+   {
+     if (c != null) {
+       PlanContext context = new PlanContext(c);
+       currentPlan.setContext(context);
+     }
+   }
+} 
+  
+  
+/***********/
+/* Context */
+/***********/
+  
+void plan_precondition(Plan currentPlan, Interpreter interpreter) :
+{
+  ConditionList c = null;
+}
+{ 
+ <PLAN_PRECONDITION> [ c=condition_list(currentPlan, interpreter) ]
+   {
+     if (c != null) {
+       PlanContext precondition = new PlanContext(c);
+       currentPlan.setPrecondition(precondition);
+     }
+   }
+} 
+  
+  
+/************/
+/* Utility */
+/************/
+  
+void plan_utility(Plan currentPlan, Interpreter interpreter) :
+{
+  Expression e = null;
+}
+{ 
+  <PLAN_UTILITY> [ e=expression(currentPlan, interpreter) ";" ]
+    {
+      if (e != null)
+	currentPlan.setUtility(e);
+    }
+} 
+
+  
+/*********************/
+/* Effects / Failure  */
+/*********************/
+
+
+void plan_effects(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanSequenceConstruct body_elements = null;
+  PlanAtomicConstruct atomic_element = null;
+}
+{ 
+  <PLAN_EFFECTS> [ body_elements=plan_body_elements(currentPlan, interpreter) ]
+    {
+      if (body_elements != null)
+	{
+	  atomic_element = new PlanAtomicConstruct(body_elements);
+	  currentPlan.setEffects(atomic_element);
+	}
+    }
+}
+
+
+void plan_failure(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanSequenceConstruct body_elements = null;
+  PlanAtomicConstruct atomic_element = null;
+}
+{ 
+  <PLAN_FAILURE> [ body_elements=plan_body_elements(currentPlan, interpreter) ]
+    {
+      if (body_elements != null)
+	{
+	  atomic_element = new PlanAtomicConstruct(body_elements);
+	  currentPlan.setFailure(atomic_element);
+	}
+    }
+} 
+
+
+/***********/
+/* Body	   */
+/***********/
+
+void plan_body(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanSequenceConstruct body_elements = null;
+}
+{
+  <PLAN_BODY> [ body_elements=plan_body_elements(currentPlan, interpreter) ]
+    {
+      if (body_elements != null)
+	currentPlan.setBody(body_elements);
+    }
+}
+
+PlanSequenceConstruct plan_branch(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanSequenceConstruct s;
+}
+{
+  "{" s=plan_body_elements(currentPlan, interpreter) "}"
+    {
+      return s;
+    }
+}
+
+
+PlanSequenceConstruct plan_body_elements(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanSequenceConstruct s = new PlanSequenceConstruct();
+  PlanConstruct ct;
+}
+{
+  ct=plan_body_element(currentPlan, interpreter)
+    {
+      s.insertConstruct(ct);
+    }
+  ( ct=plan_body_element(currentPlan, interpreter)
+    {
+      s.insertConstruct(ct);
+    }
+  )*
+    {
+      return s;
+    }
+}
+
+PlanConstruct plan_body_element(Plan currentPlan, Interpreter interpreter) :
+{
+  Action a;
+  PlanSequenceConstruct s;
+  PlanConstruct ct;
+}
+{
+  a=action(currentPlan, interpreter) ";"
+    {
+	return new PlanSimpleConstruct(a);
+    }
+| <PLAN_BODY_AND>
+    {
+      ct = new PlanBranchConstruct(null, PlanBranchConstruct.PLAN_AND_BRANCH);
+    }
+  s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanBranchConstruct) ct).addBranch(s);
+    }
+  ( s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanBranchConstruct) ct).addBranch(s);
+    }
+  )*
+ ";"
+    {
+      return ct;
+    }
+
+| <PLAN_BODY_OR>
+    {
+      ct = new PlanBranchConstruct(null, PlanBranchConstruct.PLAN_OR_BRANCH);
+    }
+  s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanBranchConstruct) ct).addBranch(s);
+    }
+  ( s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanBranchConstruct) ct).addBranch(s);
+    }
+  )*
+ ";"
+    {
+      return ct;
+    }
+
+| <PLAN_BODY_PARALLEL>
+    {
+      ct = new PlanParallelConstruct();
+    }
+  s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanParallelConstruct) ct).insertConstruct(s);
+    }
+  ( s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanParallelConstruct) ct).insertConstruct(s);
+    }
+  )*
+ ";"
+   {
+     return ct;
+   }
+
+| <PLAN_BODY_DO_ALL> 
+    {
+      ct = new PlanDoAllConstruct();
+    }
+  s=plan_branch(currentPlan, interpreter)
+    {
+    ((PlanDoAllConstruct) ct).addBranch(s);
+    }
+  ( s=plan_branch(currentPlan, interpreter)
+    {
+    ((PlanDoAllConstruct) ct).addBranch(s);
+    }
+  )*
+ ";"
+    {
+      return ct;
+    }
+
+| <PLAN_BODY_DO_ANY> 
+    {
+      ct = new PlanDoAnyConstruct();
+    }
+  s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanDoAnyConstruct) ct).addBranch(s);
+    }
+  ( s=plan_branch(currentPlan, interpreter)
+    {
+      ((PlanDoAnyConstruct) ct).addBranch(s);
+    }
+  )*
+ ";"
+    {
+      return ct;
+    }
+
+| ct = wait_construct(currentPlan, interpreter)
+  {
+    return ct;
+  }
+
+| <PLAN_BODY_WHEN> ":" a=action(currentPlan, interpreter) s=plan_branch(currentPlan, interpreter) ";"
+    {
+      ct = new PlanWhenConstruct(a, s);
+      return ct;
+    }
+
+| <PLAN_BODY_WHILE> ":" a=action(currentPlan, interpreter) s=plan_branch(currentPlan, interpreter) ";"
+    {
+      ct = new PlanWhileConstruct(a, s);
+      return ct;
+    }
+
+| <PLAN_BODY_DO> s=plan_branch(currentPlan, interpreter) <PLAN_BODY_WHILE> ":" a=action(currentPlan, interpreter) ";"
+    {
+      ct = new PlanDoConstruct(a, s);
+      return ct;
+    }
+
+| <PLAN_BODY_ATOMIC> s=plan_branch(currentPlan, interpreter) ";"
+    {
+      ct = new PlanAtomicConstruct(s);
+      return ct;
+    }
+
+// IF/ELSEIF/ELSE currently not implemented
+  /*
+| <IF> 
+    {
+      ct = new PlanSequenceConstruct();
+    }
+    a=action(currentPlan, interpreter) s=plan_branch(currentPlan, interpreter)
+    {
+      //      PlanConstruct c_if = new IfConstruct();
+      //      c_if.insertConstruct(a);
+      //      c_if.insertConstruct(s);
+      //      ct.insertConstruct(c_if);
+    }
+  ( 
+    <ELSEIF> a=action(currentPlan, interpreter) s=plan_branch(currentPlan, interpreter) 
+      {
+	//	PlanConstruct c_elseif = new ElseIfConstruct();
+	//	c_elseif.insertConstruct(s);
+	//	c_elseif.insertConstruct(a);
+	//	ct.insertConstruct(c_elseif);
+      }
+  )*
+  [ 
+    <ELSE> s=plan_branch(currentPlan, interpreter) 
+      {
+	//	PlanConstruct c_else = new ElseConstruct();
+	//	c_else.insertConstruct(s);
+	//	ct.insertConstruct(c_else);
+      }
+  ]
+
+  ";"
+    {
+      return ct;
+    }
+  */
+}
+
+
+
+PlanConstruct wait_construct(Plan currentPlan, Interpreter interpreter) :
+{
+  PlanConstruct	c = null;
+  Action	a = null;
+  Relation	rel = null;
+}
+{
+  LOOKAHEAD(2)
+ <PLAN_BODY_WAIT> ":" a=action(currentPlan, interpreter) ";"
+    {
+      c = new PlanWaitConstruct(a);
+      return c;
+    }
+
+| <PLAN_BODY_WAIT> rel=relation(currentPlan, interpreter) ";"
+    {
+      c = new PlanWaitConstruct(rel);
+      return c;
+    }
+
+}
+
+
+/**********************************************************************/
+/*								      */
+/*	Condition						      */
+/*								      */
+/**********************************************************************/
+
+ConditionList condition_list(Plan currentPlan, Interpreter interpreter) :
+{
+  ConditionList cl = new ConditionList();
+  Condition c;
+}
+{
+  c=condition(currentPlan, interpreter)
+    {
+      cl.append(c);
+    }
+  ( c=condition(currentPlan, interpreter)
+    {
+      cl.append(c);
+    }
+  )*
+    {
+      return cl;
+    }
+}
+
+Condition condition(Plan currentPlan, Interpreter interpreter) :
+{
+  Expression e;
+  Token id;
+  ExpList el;
+}
+{
+  e=expression(currentPlan, interpreter) ";"
+    {
+      return new ExpressionCondition(e);
+    }
+| <FACT> id=<IDENTIFIER> el=explist(currentPlan, interpreter) ";"
+    {
+      return new FactCondition(new Relation(id.image, el, interpreter), interpreter);
+    }
+| <RETRIEVE> id=<IDENTIFIER> el=explist(currentPlan, interpreter) ";"
+    {
+      return new RetrieveCondition(new Relation(id.image, el, interpreter), interpreter);
+    }
+}
+
+
+/**********************************************************************/
+/*								      */
+/*	Action							      */
+/*								      */
+/**********************************************************************/
+
+Action action(Plan currentPlan, Interpreter interpreter) :
+{
+  Action a;
+}
+{
+  a=exec_action(currentPlan, interpreter)
+    {
+      return a;
+    }
+| a=misc_action(currentPlan, interpreter)
+    {
+      return a;
+    }
+| a=goal_action(currentPlan, interpreter)
+    {
+      return a;
+    }
+}
+
+Action exec_action(Plan currentPlan, Interpreter interpreter) :
+{
+  Token cm = null;
+  Token fn = null;
+  Token cls = null;
+  Token id = null;
+  Token id1 = null;
+  Token id2 = null;
+
+  Token v = null;
+
+  Expression e = null;
+  ExpList el = null;
+  ExpList el1 = null;
+  ExpList el2 = null;
+
+  Action a;
+
+  String s, t;
+}
+{
+
+  // Object-oriented form of EXECUTE that invokes static functions
+  // (i.e., doesn't require an object reference)
+  cm=<EXECUTE>
+    (
+     LOOKAHEAD(2)
+     (cls=<CLASS_IDENTIFIER>
+      ("[" v=<VARIABLE> "]")?
+      el=explist(currentPlan, interpreter)
+       )
+     |
+     (fn=<IDENTIFIER>
+      ("[" v=<VARIABLE> "]")?
+      el=explist(currentPlan, interpreter)
+       )
+      )
+    {
+      if (cls != null || v != null) {
+
+	// Break down the class identifier into the class path and the
+	// function.
+	String fullIdentifier;
+	if (cls != null)
+	  fullIdentifier = new String(cls.image);
+	else
+	  fullIdentifier = new String(fn.image);
+//	System.out.println("fullIdentifier = " + fullIdentifier);
+	int lastDotIndex = fullIdentifier.lastIndexOf(".");
+//	System.out.println("lastDotIndex = " + lastDotIndex);
+	String funcName = fullIdentifier.substring(lastDotIndex+1);
+//	System.out.println("funcName = " + funcName);
+	String className;
+	if (lastDotIndex != -1)
+	  className = fullIdentifier.substring(0, lastDotIndex);
+	else
+	  className = new String("");
+//	System.out.println("className = " + className);
+//	System.out.println("arg list = " + el + ", #args = " + el.getCount());
+
+	if (v != null) {
+	  a = new ObjectAction(className, funcName,
+			       new Variable(currentPlan.getSymbolTable(), v.image),
+			       el);
+	  a.setTrace(_filename, getToken(0).beginLine);
+	  return a;
+	}
+	else {
+	  a = new ObjectAction(className, funcName, el);
+	  a.setTrace(_filename, getToken(0).beginLine);
+	  return a;
+	}
+      }
+      else {
+	a = new SimpleAction(fn.image, el, interpreter);
+	a.setTrace(_filename, getToken(0).beginLine);
+	return a;
+      }
+    }
+
+| cm=<LOAD> el=explist(currentPlan, interpreter)
+    {
+      a = new LoadAction(el, interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<RETRIEVE> id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new RetrieveAction(new Relation(id.image, el, interpreter), interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<RETRIEVEALL> s=variable() id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new RetrieveAllAction(new Variable(currentPlan.getSymbolTable(), s),
+				new Relation(id.image, el, interpreter),
+				interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<NEXTFACT> s=variable()id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new NextFactAction(new Variable(currentPlan.getSymbolTable(), s),
+			     new Relation(id.image, el, interpreter),
+			     interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<TEST> e=expression(currentPlan, interpreter)
+    {
+      a = new TestAction(e);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<ASSERT> id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new AssertAction(new Relation(id.image, el, interpreter), interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<RETRACT> id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new RetractAction(new Relation(id.image, el, interpreter), interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+
+| cm=<UPDATE> "(" id1=<IDENTIFIER> el1=explist(currentPlan, interpreter) ")"
+	      "(" id2=<IDENTIFIER> el2=explist(currentPlan, interpreter) ")"
+    {
+      a = new UpdateAction(new Relation(id1.image, el1, interpreter),
+			   new Relation(id2.image, el2, interpreter),
+			   interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+}
+
+Action misc_action(Plan currentPlan, Interpreter interpreter) :
+{
+  Token cm;
+  Token id;
+  Expression e;
+  Expression v;
+  ExpList el;
+  GoalAction ga;
+
+  Action a;
+}
+{
+  cm=<ASSIGN> v=expression(currentPlan, interpreter) e=expression(currentPlan, interpreter)
+    {
+      a = new AssignAction(v, e);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+| cm=<FACT> id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      a = new FactAction(new Relation(id.image, el, interpreter), interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+| cm=<SUCCEED>
+    {
+      a = new SucceedAction();
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+| cm=<FAIL>
+    {
+      a = new FailAction();
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+| cm=<POST> ga=goal_action(currentPlan, interpreter)
+    {
+      a = new PostAction(ga, interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+| cm=<UNPOST> ga=goal_action(currentPlan, interpreter)
+    {
+      a = new UnpostAction(ga, interpreter);
+      a.setTrace(_filename, getToken(0).beginLine);
+      return a;
+    }
+}
+
+GoalAction goal_action(Plan currentPlan, Interpreter interpreter) :
+{
+  Token kw;
+  GoalAction gab;
+  Expression e_utility;
+  ExpList e_by;
+  ExpList e_not_by;
+}
+{
+  LOOKAHEAD(3)
+  gab=goal_action_basic(currentPlan, interpreter) 
+    [
+     kw=<KEYWORD_UTILITY> e_utility=expression(currentPlan, interpreter)
+     {
+       gab.setUtility(e_utility);
+     }
+    ] 
+    [
+     kw=<KEYWORD_BY> e_by=explist(currentPlan, interpreter)
+     {
+       gab.setBy(e_by);
+     }
+    ] 
+    [ 
+     kw=<KEYWORD_NOT_BY> e_not_by=explist(currentPlan, interpreter)
+     {
+       gab.setNotBy(e_not_by);
+     }
+    ]
+  {
+    return gab;
+  }
+| gab=goal_action_basic(currentPlan, interpreter)
+  {
+    return gab;
+  }
+}
+
+GoalAction goal_action_basic(Plan currentPlan, Interpreter interpreter) :
+{
+  Token cm;
+  Relation rel;
+  GoalAction a;
+}
+{
+  cm=<ACHIEVE> rel=relation(currentPlan, interpreter)
+    {
+      a = new AchieveGoalAction(rel.getName(), rel, (Expression) null,
+				(ExpList) null, (ExpList) null,
+				interpreter);
+      return a;
+    }
+| cm=<PERFORM> rel=relation(currentPlan, interpreter)
+    {
+      a = new PerformGoalAction(rel.getName(), rel, (Expression) null,
+				(ExpList) null, (ExpList) null,
+				interpreter);
+      return a;
+    }
+| cm=<MAINTAIN> rel=relation(currentPlan, interpreter)
+    {
+      a = new MaintainGoalAction(rel.getName(), rel, (Expression) null,
+				interpreter);
+      return a;
+    }
+| cm=<QUERY> rel=relation(currentPlan, interpreter)
+    {
+      a = new QueryGoalAction(rel.getName(), rel, (Expression) null,
+				interpreter);
+      return a;
+    }
+}
+
+
+/**********************************************************************/
+/*								      */
+/*	Relation						      */
+/*								      */
+/**********************************************************************/
+
+Relation relation(Plan currentPlan, Interpreter interpreter) :
+{
+  Token id;
+  ExpList el;
+}
+{
+  id=<IDENTIFIER> el=explist(currentPlan, interpreter)
+    {
+      return new Relation(id.image, el, interpreter);
+    }
+}
+
+/**********************************************************************/
+/*								      */
+/*	Expression						      */
+/*								      */
+/**********************************************************************/
+
+Expression expression(Plan currentPlan, Interpreter interpreter) :
+{
+  String s;
+  Predicate p;
+  SymbolTable st;
+  FunctionCall fc;
+  Value val;
+}
+{
+  val=value() { return val; }
+
+  |
+  s=variable() {
+    return new Variable(currentPlan.getSymbolTable(), s);
+  }
+
+  |
+  LOOKAHEAD(2)
+  fc=funcall(currentPlan, interpreter)
+    { return fc; }
+  
+  |
+  p=predicate(currentPlan, interpreter)
+    { return p; }
+
+}
+
+
+
+ExpList explist(Plan currentPlan, Interpreter interpreter) :
+{
+  Expression e;
+  ExpList el = new ExpList();
+}
+{
+  [
+   LOOKAHEAD(2)
+   e=expression(currentPlan, interpreter) 
+    {
+      el.append(e);
+    }
+    (
+     LOOKAHEAD(2)
+     e=expression(currentPlan, interpreter)
+      {
+	el.append(e);
+      }
+    )*
+  ]
+  {
+    return el;
+  }
+}
+
+
+Value value() :
+{
+  Token val = null;
+  Token var = null;
+  Token cls = null;
+}
+{
+  LOOKAHEAD(4)
+  val=<INTEGER>
+    { return new Value(Integer.valueOf(val.image).intValue()); }
+| val=<FLOAT>
+    { return new Value(Double.valueOf(val.image).doubleValue()); }
+| val=<STRING>
+    { return new Value(val.image); }
+|
+  cls=<CLASS_IDENTIFIER> ("[" var=<VARIABLE> "]")?
+    {
+      if (cls != null) {
+	String	fullIdentifier;
+	int	lastDotIndex;
+	String	memberName;
+	String	className;
+	Class	c = null;
+	Field	f = null;
+	Object  o = null;
+	Object	memVal = null;
+	int	m;
+
+	fullIdentifier = new String(cls.image);
+	lastDotIndex = fullIdentifier.lastIndexOf(".");
+	memberName = fullIdentifier.substring(lastDotIndex+1);
+
+	//System.out.println("fullIdentifier = " + fullIdentifier);
+	//System.out.println("lastDotIndex = " + lastDotIndex);
+	//System.out.println("memberName = " + memberName);
+
+
+	if (lastDotIndex != -1)
+	  className = fullIdentifier.substring(0, lastDotIndex);
+	else
+	  className = new String("");
+
+	//System.out.println("className = " + className);
+
+	try {
+	  c = Class.forName(className);
+	  //System.out.println("c = " + c);
+	}
+	catch (Exception e) {
+	  System.out.println("Encountered exception " + e +
+			     " trying to get class " + c);
+	  e.printStackTrace();
+	}
+
+	try {
+	  f = c.getDeclaredField(memberName);
+	  //System.out.println("f = " + f);
+	}
+	catch (Exception e) {
+	  System.out.println("Encountered exception " + e +
+			     " trying to get field " + memberName);
+	  e.printStackTrace();
+	}
+
+	// ckeck modifiers to see if member is static
+	// if static, then don't create an object instance
+	m = f.getModifiers();
+	if (var == null || Modifier.isStatic(m)) {
+	  //System.out.println("Member is static!\n");
+	  try {
+	    memVal = f.get(o);
+	    //System.out.println("memVal = " + memVal);
+	    return new Value(memVal);
+	  }
+	  catch (Exception e) {
+	    System.out.println("Encountered exception " + e +
+			       " trying to create a new object");
+	    e.printStackTrace();
+	  }
+	}
+	else {
+	  //System.out.println("Member is not static!\n");
+	  try {
+	    o = c.newInstance();
+	    //System.out.println("o = " + o);
+	    memVal = f.get(o);
+	    //System.out.println("memVal = " + memVal);
+	    return new Value(memVal);
+	  }
+	  catch (Exception e) {
+	    System.out.println("Encountered exception " + e +
+			       " trying to create a new object");
+	    e.printStackTrace();
+	  }
+	}
+
+	System.out.println("ERROR, ERROR, ERROR\n");
+	return new Value("hi");
+      }
+    }
+}
+
+
+String variable() :
+{
+  Token v;
+}
+{
+  v=<VARIABLE>
+    {
+      return v.image;
+    }
+}
+
+
+FunctionCall funcall(Plan currentPlan, Interpreter interpreter) :
+{
+  ExpList el = null;
+  Token v = null;
+  Token cls = null;
+  Token fn = null;
+  String className;
+}
+{
+  /* Original */
+  /*
+    "("
+    ( fn=<SPECIAL_FUNCTION_NAME> 
+      |
+      fn=<IDENTIFIER>
+    )
+    el=explist(currentPlan, interpreter)
+    ")"
+    {
+      return new FunctionCall(fn.image, el, interpreter);
+    }
+    */
+
+  (
+    "("
+    (
+     LOOKAHEAD(2)
+      (fn=<SPECIAL_FUNCTION_NAME> /*("[" v=<VARIABLE> "]")?*/ )
+      |
+      (cls=<CLASS_IDENTIFIER> ("[" v=<VARIABLE> "]")? )
+      |
+      (fn=<IDENTIFIER> (cls=<CLASS_IDENTIFIER>)?) // to handle "new <class>"
+    )
+    el=explist(currentPlan, interpreter)
+   ")"
+  )
+  {
+    //System.out.println("Expression list is " + el.getCount() +
+    //		       " elements long.");
+
+    if (cls != null || v != null) {
+      // Break down the class identifier into the class path and the
+      // function.
+      String fullIdentifier;
+      int lastDotIndex;
+      String funcName;
+
+      if (cls != null && fn == null)
+	fullIdentifier = new String(cls.image);
+      else
+	fullIdentifier = new String(fn.image);
+
+      //System.out.println("fullIdentifier = " + fullIdentifier);
+      lastDotIndex = fullIdentifier.lastIndexOf(".");
+      //System.out.println("lastDotIndex = " + lastDotIndex);
+
+      if (fn != null)
+	funcName = fn.image;
+      else
+	funcName = fullIdentifier.substring(lastDotIndex+1);
+
+      //System.out.println("funcName = " + funcName);
+
+      if (lastDotIndex != -1)
+	className = fullIdentifier.substring(0, lastDotIndex);
+      else if (fn != null && cls != null) {
+	className = new String("");
+	el.insert(new Value(cls.image));
+      }
+      else
+	className = new String("");
+
+      //System.out.println("className = " + className);
+      //System.out.println("arg list = " + el + ", #args = " + el.getCount());
+
+      if (v != null) {
+	//System.out.println("Creating object-instance method function call\n");
+	return new FunctionCall(className, funcName,
+				new Variable(currentPlan.getSymbolTable(), v.image),
+				el, interpreter);
+      }
+      else {
+	//System.out.println("Creating static method function call\n");
+	return new FunctionCall(className, funcName, el, interpreter);
+      }
+    }
+    else {
+      //System.out.println("Creating basic function call for " + fn.image + "\n");
+      return new FunctionCall(fn.image, el, interpreter);
+    }
+    System.out.println("Creating null function call\n");
+    return null;
+  }
+
+}
+
+
+Predicate predicate(Plan currentPlan, Interpreter interpreter) :
+{
+  Token kw;
+  Token id;
+  ExpList el;
+  Relation r;
+}
+{
+  LOOKAHEAD(2)
+  "(" kw=<FACT> id=<IDENTIFIER> el=explist(currentPlan, interpreter) ")"
+    {
+      r = new Relation(id.image, el, interpreter);
+      return new PredicateFact(id.image, r, interpreter);
+    }
+| LOOKAHEAD(2)
+  "(" kw=<RETRIEVE> id=<IDENTIFIER> el=explist(currentPlan, interpreter) ")"
+    {
+      r = new Relation(id.image, el, interpreter);
+      return new PredicateRetrieve(id.image, r, interpreter);
+    }
+| "(" kw=<ACHIEVE> id=<IDENTIFIER> el=explist(currentPlan, interpreter) ")"
+    {
+      r = new Relation(id.image, el, interpreter);
+      return new PredicateAchieve(id.image, r, interpreter);
+    }
+}
+
+
+//
+//
+//
+//
+//
+
+JAVACODE
+
+String getMatchedText(Token start, Token end)
+  {
+    String matched = "";
+
+    // special case for empty production
+    // end.next == start  means that nothing consumed.
+    if (end.next != start) {
+
+      for(; start != end; start = start.next)
+	matched += getSpecialTokenText(start)+start.image;
+
+      matched += getSpecialTokenText(end)+end.image;
+    }
+    
+    return matched;
+  }
+
+JAVACODE
+
+String getSpecialTokenText(Token t)
+  {
+    // Suppose you wish to print all special tokens prior to
+    // the regular token "t" (but only those that are after
+    // the regular token before "t"):
+
+    Token st = t.specialToken;
+
+    // determines that there are no special tokens
+    // and returns control to the caller.
+    if (st == null) return "";
+
+    // walks back the special token chain until it reaches the first
+    // special token after the previous regular token.
+    while (st.specialToken != null)
+      st = st.specialToken;
+
+    String specialTokenText = "";
+
+    // now walks the special token chain in the forward
+    // direction printing them in the process.  
+    for ( ; st != null; st = st.next)
+      specialTokenText += st.image;
+      
+    return specialTokenText;
+  }
+
+

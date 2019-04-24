@@ -1,0 +1,85 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : sockets-client.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test simple socket-based communication using the
+//                      primitive actions coded in SystemFunctions.java
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:44:48 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 4
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    PERFORM sockets_tested;
+
+FACTS:
+
+// Uncomment to print debug information (comment out individual "setShow"
+// actions to inhibit some printouts)
+/*
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+	EXECUTE setShowAPL 1;
+	EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+	UPDATE (initialized) (initialized "True");
+    };
+
+}
+*/
+
+Plan: {
+NAME: "Top-level plan"
+GOAL:
+    PERFORM sockets_tested;
+CONTEXT:
+BODY:
+    EXECUTE print "Connecting to server.\n";
+    EXECUTE connectToAgentAsClient 8001 "localhost" $IN $OUT;
+    EXECUTE print "$OUT was: " $OUT ", $IN was: " $IN ".\n";
+    EXECUTE print "Receiving server connect message.\n";
+    EXECUTE recvMessage $IN $MSG;
+    EXECUTE print "Server connect message was: \"" $MSG "\" .\n";
+    EXECUTE print "Sending server a message of \"QUIT\".\n";
+    EXECUTE sendMessage $OUT "yazazazazazazazaza";
+    EXECUTE print "Waiting for server reply.\n";
+    EXECUTE recvMessage $IN $MSG;
+    EXECUTE print "Server reply was: \"" $MSG "\" .\n";
+}
+

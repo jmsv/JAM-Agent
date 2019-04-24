@@ -1,0 +1,154 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex2.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//
+//  Description       : Test basic JAM relational functions
+//
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:40:50 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE testing_done "hello";
+
+FACTS:
+    FACT initialized "False";
+    FACT test_done "False";
+    FACT count 0;
+    FACT communicated "a" 1 2.0;
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+Plan: {
+NAME:
+	"Test system functions"
+GOAL:
+	ACHIEVE testing_done $TEXT;
+CONTEXT:
+	FACT test_done "False";
+	RETRIEVE test_done $ABC;
+	RETRIEVE communicated $TEXT $INT $FLOAT;
+BODY:
+
+	EXECUTE print "2.1 < 2.0 = " (< 2.1 2.0) "\n";
+	EXECUTE print "2.1 <= 2.0 = " (<= 2.1 2.0) "\n";
+	EXECUTE print "2.1 > 2.0 = " (> 2.1 2.0) "\n";
+	EXECUTE print "2.1 >= 2.0 = " (>= 2.1 2.0) "\n\n";
+
+	EXECUTE print "2.1 < 2.1 = " (< 2.1 2.1) "\n";
+	EXECUTE print "2.1 <= 2.1 = " (<= 2.1 2.1) "\n";
+	EXECUTE print "2.1 > 2.1 = " (> 2.1 2.1) "\n";
+	EXECUTE print "2.1 >= 2.1 = " (>= 2.1 2.1) "\n\n";
+
+	EXECUTE print "2.0 < 2.1 = " (< 2.0 2.1) "\n";
+	EXECUTE print "2.0 <= 2.1 = " (<= 2.0 2.1) "\n";
+	EXECUTE print "2.0 > 2.1 = " (> 2.0 2.1) "\n";
+	EXECUTE print "2.0 >= 2.1 = " (>= 2.0 2.1) "\n\n";
+
+	EXECUTE print "\"2.1\" < \"2.0\" = " (< "2.1" "2.0") "\n";
+	EXECUTE print "\"2.1\" <= \"2.0\" = " (<= "2.1" "2.0") "\n";
+	EXECUTE print "\"2.1\" > \"2.0\" = " (> "2.1" "2.0") "\n";
+	EXECUTE print "\"2.1\" >= \"2.0\" = " (>= "2.1" "2.0") "\n\n";
+
+	EXECUTE print "\"2.1\" < \"2.1\" = " (< "2.1" "2.1") "\n";
+	EXECUTE print "\"2.1\" <= \"2.1\" = " (<= "2.1" "2.1") "\n";
+	EXECUTE print "\"2.1\" > \"2.1\" = " (> "2.1" "2.1") "\n";
+	EXECUTE print "\"2.1\" >= \"2.1\" = " (>= "2.1" "2.1") "\n\n";
+
+	EXECUTE print "\"2.0\" < \"2.1\" = " (< "2.0" "2.1") "\n";
+	EXECUTE print "\"2.0\" <= \"2.1\" = " (<= "2.0" "2.1") "\n";
+	EXECUTE print "\"2.0\" > \"2.1\" = " (> "2.0" "2.1") "\n";
+	EXECUTE print "\"2.0\" >= \"2.1\" = " (>= "2.0" "2.1") "\n\n";
+
+	// Illegal comparisons! Delete to see how they fail...
+//	EXECUTE print "2.1 < \"2.0\" = " (< 2.1 "2.0") "\n";
+//	EXECUTE print "\"2.1\" < 2.0 = " (< "2.1" 2.0) "\n";
+
+	ASSIGN $VALUE 3.141592654;
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	ASSIGN $VALUE (* 6 2);
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	ASSIGN $VALUE (* 6 2 2);
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	ASSIGN $VALUE (/ 6 2);
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	ASSIGN $VALUE (/ 6 2 2);
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	ASSIGN $VALUE (- 2);
+	EXECUTE print "$VALUE = " $VALUE "\n";
+
+	EXECUTE print "(% 2 1) = " (% 2 1) "\n";
+	EXECUTE print "(% 3 2) = " (% 3 2) "\n";
+	EXECUTE print "(% 5 2) = " (% 5 2) "\n";
+	EXECUTE print "(% 5 3) = " (% 5 3) "\n";
+
+	EXECUTE print "(% 129 13 5) = " (% 129 13 5) "\n";
+
+	EXECUTE print "(abs 5) = " (abs 5) "\n";
+	EXECUTE print "(abs 0) = " (abs 0) "\n";
+	EXECUTE print "(abs -5) = " (abs -5) "\n";
+	EXECUTE print "(abs 5.0) = " (abs 5.0) "\n";
+	EXECUTE print "(abs 0.0) = " (abs 0.0) "\n";
+	EXECUTE print "(abs -5.0 3.2) = " (abs -5.0 3.2) "\n";
+	EXECUTE print "(abs \"hello\") = " (abs "hello") "\n";
+
+	EXECUTE print "(&& (== 1 1) (== 2 2)) = " (&& (== 1 1) (== 2 2)) "\n";
+	EXECUTE print "(&& (== 1 1) (== 1 2)) = " (&& (== 1 1) (== 1 2)) "\n";
+	EXECUTE print "(|| (== 1 1) (== 2 2)) = " (|| (== 1 1) (== 2 2)) "\n";
+	EXECUTE print "(|| (== 1 1) (== 1 2)) = " (|| (== 1 1) (== 1 2)) "\n";
+	EXECUTE print "(|| (== 1 3) (== 1 2)) = " (|| (== 1 3) (== 1 2)) "\n";
+	EXECUTE print "(! (== 1 1)) = " (! (== 1 1)) "\n";
+	EXECUTE print "(! (== 1 2)) = " (! (== 1 2)) "\n";
+	EXECUTE print "(! (== \"abc\" \"abc\")) = " (! (== "abc" "abc")) "\n";
+	EXECUTE print "(! (== \"acc\" \"abc\")) = " (! (== "acc" "abc")) "\n";
+
+	UPDATE (test_done) (test_done "True");
+}

@@ -1,0 +1,169 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex1.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test basic JAM constructs and actions 
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:34:24 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:40 2001
+//  Update Count      : 6
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE printing_done "goal1";
+    ACHIEVE printing_done "goal2";
+
+FACTS:
+    FACT initialized "False";
+    FACT test_done "False";
+    FACT count 0;
+    FACT communicated "a" 1 2.0;
+
+OBSERVER:
+{
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+}
+
+Plan: {
+NAME:
+	"Test Argument Passing"
+DOCUMENTATION:
+	"Test Argument Passing"
+GOAL:
+	ACHIEVE printing_done $TEXT;
+CONTEXT:
+	FACT test_done "False";
+	RETRIEVE test_done $abc;
+	(< 1 2);
+BODY:
+
+	ASSIGN $VALUE 0;
+
+	WHILE : TEST (<= $VALUE 5)
+	{
+	    EXECUTE print "\n" $TEXT ":" $VALUE "\t";
+	    ASSIGN $VALUE (+ $VALUE 1);
+
+	    ASSIGN $LOOP 9;
+	    DO 
+	    {
+		EXECUTE print $LOOP "\t";
+		ASSIGN $LOOP (- $LOOP 1);
+	    } WHILE : TEST (> $LOOP 5);
+
+	    ASSIGN $LOOP 9;
+	    WHILE : TEST (> $LOOP 5)
+	    {
+		EXECUTE print $LOOP "\t";
+		ASSIGN $LOOP (- $LOOP 1);
+	    };
+
+	};
+
+	EXECUTE print "\n" $TEXT ": Done with loop\n" $TEXT ":";
+
+	DO
+	{
+	    EXECUTE print $VALUE "\t";
+	    ASSIGN $VALUE (- $VALUE 1);
+	}
+	WHILE : TEST (> $VALUE 0);
+
+	ACHIEVE communicated "First";
+	ACHIEVE indirect_communicated "Second";
+	ACHIEVE communicated $TEXT;
+	ACHIEVE indirect_communicated (+ $TEXT "+" "Third");
+
+	OR
+	{
+	    EXECUTE print "\nJAM\n";
+	};
+
+	OR
+	{
+		AND
+		{
+			AND
+			{ ACHIEVE communicated "Hello"; }
+			{ ACHIEVE communicated "there."; }
+			;
+		}
+		{
+			AND
+			{ ACHIEVE communicated "This is"; }
+			{ ACHIEVE communicated "a test."; }
+			;
+		}
+		{
+			RETRIEVE test_done $DONE_YET;
+			TEST (== $DONE_YET "True");
+		};
+	}
+	{ 
+		AND
+		{
+			EXECUTE print "A branch.\n"; 
+		}
+		{
+			EXECUTE print "Another branch.\n"; 
+		};
+	};
+
+}
+
+Plan: {
+NAME:
+	"Communicate with the outside world"
+GOAL:
+	ACHIEVE communicated $TEXT;
+BODY:
+    EXECUTE print $TEXT "\n";
+}
+
+Plan: {
+NAME:
+	"Communicate with the outside world using a helper goal"
+GOAL:
+	ACHIEVE indirect_communicated $TEXT;
+BODY:
+    ACHIEVE communicated $TEXT;
+}

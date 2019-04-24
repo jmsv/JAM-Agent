@@ -1,0 +1,126 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex7.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test robustness to attempts at subgoaling within the
+//                      JAM observer.  Also tests JAM's basic subgoaling
+//                      functionality.
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:43:39 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 6
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE JAM_test_done "JAM_test_done";
+
+FACTS:
+    FACT test_done "False";
+    FACT test_entry 1.0;
+    FACT cycle_num  0;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE cycle_num $CYCLE_NUM;
+    EXECUTE print "In Observer body at cycle number " $CYCLE_NUM ".\n";
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+    // Note that the following ACHIEVE is here just to
+    // demonstrate Jam! detection and output behavior.  It
+    // is non-functional (i.e., it is ignored)
+    ACHIEVE first_level_subgoal;
+}
+
+Plan: {
+NAME:
+	"Test JAM"
+GOAL:
+	ACHIEVE JAM_test_done $goal_name;
+CONTEXT:
+	FACT test_done "False";
+BODY:
+//    EXECUTE setShowGoalList 1;
+//    EXECUTE setShowIntentionStructure 1;
+    EXECUTE print "First line.\n";
+    EXECUTE print "Second line.\n";
+    ACHIEVE first_level_subgoal;
+    EXECUTE print "Fourth line.\n";
+    EXECUTE print "Fifth line.\n";
+
+FAILURE:
+    EXECUTE print "Top-level plan failed!\n\n\n\n";
+}
+
+Plan: {
+NAME:
+	"Test subgoaling"
+GOAL:
+	ACHIEVE first_level_subgoal;
+BODY:
+    EXECUTE print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+
+    ACHIEVE second_level_subgoal;
+    
+    EXECUTE print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+
+FAILURE:
+    EXECUTE print "First-level subgoal's plan failed!\n";
+
+}
+
+Plan: {
+NAME:
+	"Test deeper subgoaling"
+GOAL:
+	ACHIEVE second_level_subgoal;
+BODY:
+    EXECUTE print "11111111111111111111111111\n";
+
+    EXECUTE print "22222222222222222222222222\n";
+
+
+FAILURE:
+    EXECUTE print "Second-level subgoal's plan failed!\n";
+
+}

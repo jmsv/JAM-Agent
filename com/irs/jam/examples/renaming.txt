@@ -1,0 +1,48 @@
+old	    new			notes
+--------    ---------------	--------------------
+ex1.jam	    basic.jam
+ex2.jam	    relations.jam
+ex3.jam	    subgoals.jam
+ex4.jam	    threads1.jam	This doesn't work as intended
+ex5.jam	    debugging.jam	This could probably be improved
+				due to all the debugging aids
+				that are in JAM now
+ex6.jam	    trycatch.jam
+ex6b.jam    doallany1.jam
+ex7.jam	    observerfail.jam
+ex8.jam	    nativejava.jam
+ex9.jam	    precond.jam
+exA.jam	    lisplist.jam
+exB.jam	    succeedfail.jam
+exC.jam	    goalsemantics.jam
+exD.jam	    maintain.jam
+exE.jam	    post.jam
+exF.jam	    doallany2.jam
+exG.jam	    threads2.jam
+exH.jam	    wait.jam
+exI.jam	    conclude.jam
+exJ.jam	    metalevel.jam
+
+ex-lowprice.jam	    lowprice.jam
+agent-go.jam
+blocks-world.jam
+checkpoint-agent.jam
+ex-apltest.jam			Probably remove this
+ex-dd21prims.jam    introspec.jam
+ex-funcall.jam	    methodinvoke.jam
+ex-hanoi.jam	    hanoi.jam
+ex-load.jam	    load.jam
+ex-members.jam	    memberaccess.jam
+ex-new.jam	    javanew.jam
+ex-parallel.jam	    threads3.jam
+ex-unpost.jam	    unpost.jam
+ex-variablebinding.jam variablescope.jam
+parse-string.jam
+retrievall.jam
+sockets-client.jam
+sockets-client2.jam
+sockets-server.jam
+sockets-server2.jam
+
+plan-gen.jam			Remove this from the directory before distributing
+test-idl.jam			Remove this from the directory before distributing

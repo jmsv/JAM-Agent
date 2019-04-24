@@ -1,0 +1,613 @@
+Highest-priority items:
+
+  *** PARALLEL construct screwed up (also should make everything
+      thread-safe), [ex4.jam, exg.jam]
+
+Things "TO DO" (some new, some old, some completed):
+(X indicates completed, - indicates in progress)
+
+---------------------------------------------------------------------
+
+World Model Related Changes:
+
+    o Social modeling: add some explicit constructs for modeling other
+      agents (including humans).
+
+    o Consider automatic consistency checking and inference rules.
+
+    o Add wildcard support for UPDATE action so that "don't care" fields
+      can be left alone, such as in:
+      UPDATE (tree "maple1" "maple * 25) (tree "maple1" "maple" * 30);
+      where the "*" indicates leaf color, to indicate that the maple
+      tree "maple1" grew from 25 to 30 feet.  Currently, "don't care"
+      fields are implied by leaving fields unspecified at the end of a
+      relation, but that won't work in general since sometimes the
+      fields in the middle aren't significant.
+
+    o Need to implement support for return of multiple WM entries for
+      FACT and RETRIEVE actions and then some form of iterator/selector
+      for going through each entry.
+
+      - Looks like an action that retrieves _ALL_ WM entries at the same
+        time will cause problems since that would require multiple
+        simultaneous variable plan bindings.  Will need to do something
+        to provide a lower-level interface, perhaps right down to the
+        "BuckerIterator" level, where the writer of the plan steps
+        through possible matches which change the variable bindings at
+        each invocation to match the new relation.
+
+	E.g.
+	    RETRIEVEALL $FACTS on $block1 $block2;
+	    WHILE : TEST (NEXTFACT $FACTS) {
+	        use/evaluate new binding
+            };
+
+        The first line takes "on $block1 $block2" as the WM relation,
+	instantiates an iterator for it, and assigns the iterator to the
+	variable $FACTS (which will actually be a
+	WorldModelTableBucketEnumerator).  The definition of WMITERATOR
+	as a JAM "action" is so that parsing of the relation can done by
+	the JAM parser.  The WHILE test action steps through the
+	iterator and binds new values to the variables.  The above has
+	the potential danger that the getNextWMElement implicitly uses
+	the WM relation referenced in the NEXTFACT action.  This has the
+	problem that the binding change would be implicit but removes
+	the burden of the programmer to duplicate relations.
+
+    o Consider addition of "degree of belief" (probability?) measure for
+      entries.
+
+    o Consider segmenting WM ala Collins (Readings in Uncertainty, pg
+      629), something like [Self Knowledge, Social Knowledge, and
+      Task Knowledge], or user-specifiable segments.  FACT and RETRIEVE
+      need to be extended to support segment identifiers.
+
+    o Consider hierarchical organization of WM either declared
+      explicitly within a ".jam" file or implicitly through extraction
+      of a class hierarchy (and features, and functionality) from class
+      definitions.  Probably have "domain theory" of agent specified
+      explicitly within .jam file.  Hierarchy would represent IS-A links
+      (i.e., class -> instance relationships).  Need to implement
+      predicates (functions) for evaluating class/subclass relationship
+      status.
+      - PRS-CL and Zeus provide good examples of ontology/hieararchy
+      - Could this be exploited during matching, where derived objects
+        would match base-class objects?
+      - What kind of additional accessors/queries would need to be
+        supported to inspect the hierarchy (which would almost certainly
+        be a usedful thing to reason about)?
+      Example:
+        CLASS {
+	  NAME: BLOCK
+	  IS-A: OBJECT
+	  ATTRIBUTES: COLOR SIZE
+	}
+
+    o Add explicit universal and existential quantifiers to World Model
+      references in CONTEXT/PRECONDITION.  Current scheme uses implicit
+      existential qualifier.
+      Need something like:
+         <EXISTS | FORALL> <FACT | RETRIEVE> <relation> <condition>
+	 EXISTS (tree "maple" $height);
+	    Returns true if any maple tree entry is in the WM and
+            returns first entry?
+	 FORALL (FACT tree "maple" $height);
+	    Returns true if all tree entries are maples and returns all
+            entries?
+	 FORALL (FACT tree "maple" $height $color) (&& (< $height 25)
+                                                       (== $color "red"));
+            This would be possible to implement because the binding part
+            is independent of the relational comparison part.  To
+            implement this, though, the FACT/RETRIEVE must be changed to
+            return all matches of the proposition so that the FORALL can
+            iterate over the individual matches.
+
+    o Support expression of non-existance of World Model entries (e.g.,
+      DISBELIEVE CLEAR "Block1", BELIEVE FACT CLEAR "Block2").
+      Then need to provide support for differentiating between "knows",
+      "knows not", and "doesn't know" (i.e., whether the agent's WM
+      should make the Closed World Assumption (CWA) or not).
+      - This requires a three-valued return value for FACT and
+        RETRIEVE.
+      - Add runtime switch and primitive for specifying CWA or not.
+
+    o Add time tags to World Model entries.
+
+    o Consider adding optional "persistence" parameter to entries to
+      indicate a timeout at which point it should be removed.
+
+    o Consider adding an optional "removal condition" upon which to
+    retract an entry when it becomes true.
+
+    o Consider adding optional function field to each entry to be used
+      to automatically change the value over time.  E.g., a decay rate
+      (used in conjunction with remove condition with a remove
+      threshold.)
+
+X   o Determine method for creation and manipulation of 1st-class
+      objects on world model.  Perhaps use "relation name" as class name
+      and then pass the ExpList to a constructor that parses through it
+      and extracts the appropriate member values from it using the Java
+      reflection package. Maybe serialize objects to strings that are
+      saved as only argument (w/ relation name holding the class name)
+X       o Each WM object would have to support UPDATE, ASSERT, FACT,
+          RETRIEVE, etc.  This came naturally through the implementation
+          of a ValueObject class.
+X      o Methods on objects could then be invoked and members of objects
+	 could then be accessed (e.g., "ASSIGN $f ClassName.getMember();")
+
+
+---------------------------------------------------------------------
+
+Goal Related Changes:
+
+    o Possible goal options
+      ACHIEVE <goal>
+-        :BY - specify plans to select from
+-        :NOT-BY - specify plans NOT to select from
+X	 :UTILITY - base utility for subgoal intention
+	 :MIN-UTILITY - minimum required utility for subgoal intention
+	 :RETRY-UPON-FAILURE - Do not consider subgoal failure as
+               failure, but retry the subgoal automatically.
+         :REGEN-APL - Upon subgoal retry, generate a NEW APL.
+	 :EXHAUST-APL - Upon subgoal retry, do not generate a new APL
+               but select the next best element from the original APL.
+	 :DYNAMICALLY-SWITCH - continually re-evaluate APLs and switch
+          to an element with a higher utility if one is found. [This
+          runs counter to BDI theories but the idea seems to come up
+          every once in a while.]
+
+    o Implement switchable (primitive action and command-line option)
+      persistent/opportunistic goal execution (i.e., pre-emptable or
+      not)
+      - E.g., EXECUTE allowSuspensionOfIntentions "False";
+      - E.g., EXECUTE permitIntentionSuspension "True";
+
+    o Implement some scheme for specifying minimum utility of intention
+      before it's "acceptable", and block until an acceptably-high
+      utility intention is found.
+      - Implies the need for some way of accessing the current
+      intentions utility from within a plan so that a minimum utility
+      relative to the current utility can be calculated/specified.
+
+    o Implement some scheme for specifying SATISFICING goals that don't
+      need absolute achievement but that the can get away with something
+      less than perfect.
+      - How should the "satisfaction level" of a plan be calculated?
+        Completion of a plan should obviously (?) satisfy such a goal.
+        Otherwise, count number of actions relative to number of actions
+        in the plan?  Have a SATISFACTION-LEVEL: field in plans that
+        provides a calculation that's updated every cycle?
+
+    o Implement universal subgoaling, where more than a single subgoal
+      may be established (either sequentially or in parallel) for a
+      single goal statement.  E.g., 
+      ACHIEVE FORALL {$x | (IS-A $x "Block")} CLEAR x;
+
+    o Implement simultaneous, parallel subgoaling.
+      o Currently, subgoals within multiple PARALLEL branches locks up
+        and parent goal gets marked with BLOCKED.  The reason for this
+        is that each Goal object needs to be able to hold a list of
+        subgoals rather than a single subgoal so that each branch's
+        subgoal can be managed.
+
+X   o Implement AchieveBest-style top-level goal semantics
+
+X   o Implement POST and UNPOST (missed them).
+X     o Check see if POST currently doesn't take variables w/ bindings
+        correctly (i.e., it was POSTing with a list of 'null'
+	arguments).
+      o Implement switch on UNPOST to specify to not execute FAILURE
+        section of intended plans (i.e., do not treat as failure, but do
+        not treat as successful either).
+
+X   o Check to see if :BY and :NOT-BY goal options work.  Yes.
+
+    o Consider adding concept of "motivations" to architecture (e.g.,
+      Luck and d'Inverno, ICMAS'95), where motivations are given to an
+      agent and it then derives goals from the motivations.
+
+X   o Modify goal semantics as follows:
+X	o NOTE that to implement the following semantics changes, it
+	  might be necessary to change the Plan syntax for theoretical
+	  reasons: a specification to ACHIEVE a goal vs. to PERFORM a
+	  plan dictates whether state-achievement is performed or not,
+	  but all Plans will not necessarily be "goal achievers".  This
+	  motivates adding a "goal achiever" field to plans to indicate
+	  this.  It also indicates that the Plan's GOAL: specification
+	  of ACHIEVE vs. PERFORM vs. MAINTAIN might also be redundant,
+	  confusing and perhaps even conflicting.  Should ACHIEVE goal
+	  specifications imply only searching for plans that have an
+	  ACHIEVE goal spec. for their GOAL: (and similarly, PERFORM for
+	  PERFORM and MAINTAIN for MAINTAIN)?  Or should PERFORMs be
+	  able to use ACHIEVE plans but not assert the goal state to the
+	  WM?  And it makes a lot of sense to have MAINTAIN goals use
+	  ACHIEVE plans.  The idea of Plans having goal specs of
+	  MAINTAIN seems strange to me and would, anyway, have identical
+	  semantics as Plans with ACHIEVE goal specs.
+
+        		    Plan GOAL spec:
+        		 ACHIEVE      PERFORM       
+          Goal spec: ---------------------------
+	  MAINTAIN         Yes          No
+	  ACHIEVE          Yes          No
+	  PERFORM         Maybe         Yes
+
+	  I'll implement this so that PERFORM goals can use plans with
+	  any type of GOAL: spec and then have the goal state added to
+	  the World Model according to the plan's GOAL: spec.  And, I'll
+	  implement ACHIEVE and MAINTAIN goals to only use plans with an
+	  ACHIEVE GOAL: spec.
+	  Also, do MAINTAIN goals need to be restricted to top-level
+	  goals?  A plan would never complete if it invokes a MAINTAIN
+	  subgoal.  So yes, assume MAINTAIN can only be top-level
+	  goals.  Make sure to emphasize this in the manual.
+X	o Implement a PERFORM goal with exact same semantics as current
+	  UMPRS ACHIEVE semantics (i.e., perform some plan).
+X	o Implement an ACHIEVE goal with the current UMPRS ACHIEVE goal
+	  except that the goal expression will be asserted to the World
+	  Model when a plan for the goal completes and subgoaling will
+	  not be performed if the World Model indicates that the goal is
+	  already accomplished.
+X	o Implement a MAINTAIN goal with the semantics of checking for
+	  whether a goal specification in the World Model is true and,
+	  if not, do new ACHIEVE-like behavior until goal is achieved
+	  and asserted to World Model.  If the expression _is_ on the
+	  World Model, keep the goal on the goal list.
+
+    o Consider implementation of a "Knowledge Goal", a goal with
+      semantics specifically for performing mental introspection (ala
+      Leake in '95 Spring Symposium notes) similar to Query goal.
+      - What should the intention status be?  Active?  Suspended?
+        Probably active.  Implemented as active, so that the only way
+        that another plan/goal can run is if it has a higher priority.
+
+
+---------------------------------------------------------------------
+
+Plan/Action Related Changes:
+
+    o Need to make sure PARALLEL is thread safe
+
+    o Add support for printing out an error-trace of constructs or
+      context section that caused a plan to fail.
+
+X     - Added support for printing out of file anme and line number in
+        the case of action failure.
+
+    o Implement a number of type-checking primitives that a programmer
+      can use to check a variable for whether it's bound, unbound, Long,
+      Real, String, or Object.
+
+    o Add a TRUE/FALSE expression constant that can be used in
+      situations where folks want to be explicit about the tautology
+      of an expression.  E.g., WHILE : TEST (TRUE) { ... }
+
+    o Implement all combinations of Do/Achieve, Any/All/Best,
+      Sequential/Parallel/Random, etc. constructs
+
+    o PARALLEL construct does an implicit AND.  Extend this so that
+      there is both a conjunctive and disjunctive form (e.g.,
+      PARALLEL_ALL and PARALLEL_ANY).
+
+X   o Implement LOAD action (it's there, but execute() is empty).
+
+    o Add some support for "backing up" within a plan, either
+      architecturally or as a described programming paradigm.
+
+      - True reversal of actions is not generally possible (e.g.,
+        jumping off a bridge is not an easily reversible action) but is
+        possible in some domains (e.g., many graphical domains) and
+        would probably require an explicit reversing action to be
+        employed (maybe encode a REVERSABLE construct that pairs
+        simple actions, one for forward, one for reverse?)
+
+X   o Implement PARSE action (implemented as parseString primitive
+      function).
+
+    o Add IDL-like specifications for primitive functions (and goals) so
+      that argument type and In/Out/InOut specifications can be checked
+      by the parser before run-time to catch errors like typos,
+      uninstantiated variables, etc.  Make this an optional feature so
+      that people can write both systems that are typed or untyped (or
+      somewhere in between).  Specify with parser directive #JAMPARSER
+      CHECK_IDL and/or a command-line specification.
+      - Need to write a "system" .jam file that specifies the Jam system
+        primitives IDL so that agent developers can include it (or
+        better yet, it can be included automatically when the directive
+        is specified)
+
+X   o Add some support for representation for resources: slot to plans
+      and add primitives to reason over them.
+X     - Added ATTRIBUTES slot to plans.  Added plan-level action to
+        access attributes from an APLElement.
+
+X   o Implement a WAIT action/goal that blocks continued execution of
+      the plan until an expression evaluates to true.
+
+X   o Write 'parseString' primitive function and modify parser by adding
+      another entrance-point (maybe "public static void
+      parseString(String buf)") to parse arbitrary strings in the middle
+      of a run and from command-line arguments
+
+    o Add attributes representation to primitive actions (transform more
+      into a "capabilities" model).
+
+    o FAILURE section modifications
+X     o Nested failure removes top-level goal from IntentionStructure.
+      o Need to provide information about exactly what failed in the
+        plan so that the better failure response can be programmed.
+
+X   o Modify branches to have non-deterministic branch selection
+      execution behavior.
+X     o This modification almost necessitates a deterministic variation
+        like an IF-ELSEIF-ELSE construct. [Implemented non-deterministic
+        branching in DO_ALL and DO_ANY]
+
+-   o Determine easy accessors to object member functions at the plan
+      level, so that primitive function interfaces don't need to be
+      written for each one. (See 1st-class objects/reflection package
+      changes above)
+X     - Mostly done.  Works for EXECUTE calls on member functions that
+        do not require object member data (e.g., static functions).
+      - Still need to modify parser to accept such invocations from
+        general expressions.  For example, ASSIGN $var (Class.Function
+        3); and TEST (Class.Function "hello" 3 "there");
+	o Will require incorporating this into the Expression class
+      - Need to test invocation/declaration of constructors.
+      - Need to implement method return values.
+-     - Need to support modification of method arguments
+        [partially done as modifications to objects is automatically
+        reflected back to plans due to Java]
+
+X   o Add a SUCCEED action which has the semantics of a NOOP, and simply
+      returns true.  This would come in useful for "catch" branches,
+      where all somebody wants is:
+
+	    OR
+	    {
+		...try something that may fail but which shouldn't
+		...kill the plan
+	    }
+	    {
+	        SUCCEED;
+	    }
+
+    o Add PLANSUCCEED action which has the semantics of an immediate
+      plan success.
+
+X   o Add a "CONCLUDE <relation_name>" purpose specification with
+      semantics of invocation of APL generation when the appropriate
+      World Model relation is added or modified in the World Model
+      (i.e., pure data-driven invocation).
+
+X   o Add preconditions slot to plans
+
+X   o Add meta-level primitive actions.
+X       o This might require some significant changes to the
+          interpreter.
+X	- Initial implementation completed.  Interpreter modified and
+	  primitive actions implemented to deal with accessing APL,
+	  APLElements, plan attributes, and attribute values and for
+	  intending a specific intention to the agent's Intention
+	  Structure.
+
+
+---------------------------------------------------------------------
+
+Interpreter/Intention Structure Related Changes:
+
+    o There's a problem with using variables from a plan's goal
+      specification within a FACT or RETRIEVE statement in the plan
+      context or precondition section.  The variable gets bound to the
+      first world model relation that matches the FACT or RETRIEVE
+      relation and therefore causes APL generation to ignore some
+      variable bindings.  Something needs to be done so a local binding
+      for the linked parameters is used rather than the linked binding. 
+
+      A workaround is to use local variables within the context or
+      precondition and then set the linked variables within the plan
+      body when the plan runs.
+
+    o Save APL and other decision-making information at decision points
+      for meta-level reasoning, backtracking, logging, audit trails, etc.
+
+X   o Modify interpreter to handle undefined functions, perhaps simply
+      indicating the error and returning FAIL.
+
+    o Consider new termination criteria other than simply "all top-level
+      goals accomplished", and implement as a command-line option (only
+      other option identified so far is "continue running").
+
+
+---------------------------------------------------------------------
+
+Observer Related Changes:
+
+X     o Implement basic observer functionality
+
+      o Implement "Observer" functionality as a separate thread.
+
+      o Change "observer" nomenclature to "monitor"
+
+      o Implement primitive action to turn "Observer" on and off.
+
+
+---------------------------------------------------------------------
+
+Miscellaneous Functionality Related Changes:
+
+    o Need to add some more explanation in the manual about how to write
+      primitive functions re: methods for converting input args (e.g.,
+      getObject(), getString())
+
+-   o Extend native plan representations (from string, float, integer)
+      to include such things as vectors, lists, and/or sets.
+X     - Added ObjectValue to handle native Java objects.
+
+X   o Redesign everything to remove static members so that multiple
+      agents can be invoked in the same Java virtual machine.
+X     - Still need to modify debug flags and statistics to be non-static
+
+    o Consider adding an IDLE procedural construct that is executed when
+      the agent has no goals to do (i.e., it is "idle").
+
+    o The threading functionality seems to be messed up and doesn't keep
+      the threads lock-step with each other.  Need to check out the
+      latest Thread implementation specifics and figure out what needs
+      to be done.
+
+    o Add plan generation capabilities, where a programmer can create
+      action specifications for primitive functions that are in a form
+      that's consistent and complementary to plan specifications.  Then,
+      when the agent finds itself in a position of being "blocked",
+      where a plan has subgoaled but for which an applicable plan
+      couldn't be found, the agent can possibly generate a plan composed
+      of a combination of primitive actions and plans.  The plan will
+      initially be transient, but could be saved for perusal later.
+      - Issue: Unification of variables between contiguous actions.
+        This is different from unification between goals and subgoals
+        because referenced variables will all be within the SAME plan
+        rather than in different plans.
+X     - Issue: Identification of invocation points within the
+        interpreter.  Placed invocation where goal is marked as
+        IS_BLOCKED.
+      - Scenario notes: goal is going to be marked as BLOCKED, so invoke
+        plan generation.  Pass goal specification, plan and action
+        libraries, and current world model to plan generation routine.
+        Blockage is caused by 1) no plans with matching goal
+        specification exist, 2) plans exist but one or more context
+        and/or precondition elements are failing in all plan instances.
+        If case 1, then plan gen. will need to build a list of primitive
+        actions "backward" from those actions that contain the goal
+        spec. as part of its EFFECTS section.  If case 2, then generated
+        plan will austensibly be composed of a sequence of primitive
+        actions that fulfill on of the plans' failing
+        precondition/context elements and then one of the plans in the
+        plan library.
+-     - Modify plan and primitive function representation to be ADL
+        compliant (true pre and postconditions, many other mods)
+
+X   o Add a statistics class for gathering information on number of
+      intepreter/Observer cycles, number of APL's generated and
+      filtered, etc., for output at the end of a run.
+
+      - Add statistic for total utility achieved during the agent's
+        execution.  The question arises as to just how to interpret what
+        the total utility of an intention stack is.  One interpretation,
+        and the one most intuitive and easiest to implement, is that
+        each subgoal adds its intention's utility to the sum.  Another
+        is that each subgoal only contributes to the utility of the
+        parent's utility so that only the top-level intention's utility
+        should be considered upon completion.
+
+X   o Implement primitive action to turn debugging output on and off.
+X     - setShowWorldModel, setShowGoalList, setShowAPL, and
+        setShowIntentionStructure implemented.
+
+    o Modify intention execution semantics (and add runtime behavior
+      flag) to support mutually exclusive semantics of:
+      - UMPRS mode: execute one intention.
+      - SCS mode: execute first executable intention found, in order of
+        utility.
+      - SOAR mode: execute all executable elements.
+
+X   o Add agent mobility functionality through serialization.
+X     - Implemented two "checkpoint" functions, that serialize the agent
+        to a variable and to a file.  Also implemented a class to
+        deserialize the agent and restore it to its execution state.
+        This doesn't completely implement mobility, but is the key
+        technical hurdle.
+X     - Add an "agent_go" (ala Agent TCL) function that specifies a
+        remote machine, performs the checkpointing, and transmits it
+        to a deserialization server on that machine.  This requires
+        extending the deserialization class into a permanent server w/
+	some form of persistent communications service (probably
+	sockets).
+
+X   o Test implementation of primitives as user-defined classes.  The
+      idea is to create an interface specification for an 'execute'
+      member function that all user-defined derivations would
+      implement.  All primitive functions would then be invoked through
+      the Reflection method developed earlier to access "legacy code"
+      classes and would no longer use the barbaric string comparison
+      method currently used.
+
+X   o Write primitive to send and receive messages.  Use Java-native
+      sockets initially.
+-     - Implementing RMI-based communication primitives.  Need to
+        implement a local implementation of an RMI-capable class,
+        perhaps local to UserFunctions.java.
+
+    o Consider adding explicit expectations representation and
+      mechanisms as per RAMA [Earl & Firby, '96].
+
+    o Consider adding some form of explicit architecturally supported
+      representation and reasoning throughout the code for resource
+      limitations or bounds (e.g., metalevel reasoning stops when
+      resources (e.g., time left) get too low).  Perhaps the interpreter
+      can then examine how close a plan's execution is to its resource
+      bounds and issue "warnings" or perhaps trigger contigency
+      planning.
+      - Add some way for an agent programmer to specify resource
+        limitations and thresholds (e.g., when to stop reasoning and
+        simply act).
+	E.g., EXECUTE setMetalevelMaxTime 0.05;
+	E.g., EXECUTE setAPLGenerationMaxTime 0.001;
+	E.g., EXECUTE setIntepreterLoopMax 0.1;
+      - Perhaps use the ATTRIBUTES section of plans to specify
+        JAM-recognized attributes (particularly "TIME")
+      - Motivates development and ability to specify various search
+        mechanisms rather than using the exhaustive search scheme
+        currently used because it would then pay to try and evaluate the
+        best alternatives first before "time runs out".
+	E.g., ExECUTE setAPLGenerationSearch "Sorted";
+
+
+---------------------------------------------------------------------
+
+Other:
+
+    o Post announcement of Jam to comp.ai.shells
+
+    o Upload Jam to CMU AI archive.
+
+    o Change distribution to include the post JavaCC'd files (i.e., the
+      java files generated from JavaCC from the .jj file) and not
+      require the end-user to download and install JavaCC.  This
+      includes modifying the 'clean.bat' file to not remove all the
+      post-JavaCC java files.
+
+    o Perform complexity analysis on Jam algorithms.
+
+-   o Comment all methods and classes. [In progress]
+
+X   o Put Jam into a package.
+      - Jam now part of com.irs.jam package (e.g., invoke a Jam agent
+        with "com.irs.jam.JAM <files>"
+
+    o Implement "command line" interface that lets a user interact with
+      JAM much like Lisp/Soar.  Functionality like stepping one cycle
+      and invoking methods to print the world model, APL, etc., load new
+      plans, goals, world model entries, set breakpoints, etc. could be
+      supported.
+
+    o Parser modifications
+      o There's a problem with the parser allowing a "Plan: { };"
+        grammar (which is wrong) and subsequently ignoring all remaining
+        plans (or so it seems).
+      o Implement parser directive parsing (e.g., with a #JAMPARSER
+        prefix)
+      o Don't exit parser with error when undefined primitive action
+        found - simply flag as undefined or something similar.
+      o "True" and "False" are used a lot (at least by me), so maybe
+        assign special tokens (e.g., TRUE and FALSE, or JAM-Values.TRUE
+        and JAM-Values.FALSE if some form of agent-accessible system
+        variables are define) that can be used in plans.
+
+    o Psychologically-motivated changes
+      - Caching schemes for plan and belief retrieval, where "most
+        familiar" plans and beliefs are more likely to be retrieved (or
+        at least considered earliest perhaps simply through ordering
+        these).
+      - Emotion constructs

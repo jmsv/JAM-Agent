@@ -1,0 +1,184 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : plangen.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test plan generation constructs and functionality
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:02 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 6
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1998-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+//
+// The blocks-world.jam file ignores implementing actual
+// primitive functions for moving blocks by using ASSERT
+// and RETRACT to simply change the world state.  This file
+// exercises the new plan generation capabilities of Jam!
+// agents to use primitive function pre&post-conditions
+// definitions to construct an appropriate plan when a
+// pre-defined Jam plan does not exist.
+//
+
+GOALS:
+    ACHIEVE blocks_stacked;
+
+FACTS:
+
+// Goal already achieved - Agent should recognize this and do nothing.
+/*
+    FACT ON "Block1" "Block2";
+    FACT ON "Block2" "Block3";
+    FACT ON "Block3" "Table";
+    FACT CLEAR "Block1";
+    FACT CLEAR "Table";
+    FACT initialized "False";
+*/
+
+// Block1 on Block2 initially so need to clear Block2 before stacking.
+/*
+    FACT ON "Block1" "Block2";
+    FACT ON "Block2" "Table";
+    FACT ON "Block3" "Table";
+    FACT CLEAR "Block1";
+    FACT CLEAR "Block3";
+    FACT CLEAR "Table";
+    FACT initialized "False";
+*/
+
+// Block5 on Block4 on Block3 initially so need to clear Block3 before stacking.
+
+    FACT ON "Block5" "Block4";
+    FACT ON "Block4" "Block3";
+    FACT ON "Block1" "Block2";
+    FACT ON "Block2" "Table";
+    FACT ON "Block3" "Table";
+    FACT CLEAR "Block1";
+    FACT CLEAR "Block5";
+    FACT CLEAR "Table";
+    FACT initialized "False";
+
+
+/*
+// Blocks inverted initially
+
+    FACT ON "Block1" "Table";
+    FACT ON "Block2" "Block1";
+    FACT ON "Block3" "Block2";
+    FACT CLEAR "Block3";
+    FACT CLEAR "Table";
+*/
+
+Plan: {
+NAME: "Top-level plan"
+DOCUMENTATION:
+    "Establish Block1 on Block2 on Block3."
+GOAL:
+    ACHIEVE blocks_stacked;
+CONTEXT:
+BODY:
+    EXECUTE print "Goal is Block1 on Block2 on Block2 on Table.\n";
+    EXECUTE print "World Model at start is:\n";
+    EXECUTE printWorldModel;
+    EXECUTE print "ACHIEVEing Block3 on Table.\n";
+    ACHIEVE ON "Block3" "Table";
+    EXECUTE print "ACHIEVEing Block2 on Block3.\n";
+    ACHIEVE ON "Block2" "Block3";
+    EXECUTE print "ACHIEVEing Block1 on Block2.\n";
+    ACHIEVE ON "Block1" "Block2";
+    EXECUTE print "World Model at end is:\n";
+    EXECUTE printWorldModel;
+}
+
+Plan: {
+NAME: "Stack blocks that are already clear"
+GOAL:
+    ACHIEVE ON $OBJ1 $OBJ2;
+CONTEXT:
+BODY:
+    EXECUTE print "Making sure " $OBJ1 " is clear (ACHIEVEing it).\n";
+    ACHIEVE CLEAR $OBJ1;
+    EXECUTE print "Making sure " $OBJ2 " is clear (ACHIEVEing it).\n";
+    ACHIEVE CLEAR $OBJ2;
+    EXECUTE print "Both objects now clear.  Moving " $OBJ1 " on top of " $OBJ2 ".\n";
+    PERFORM move $OBJ1 $OBJ2;
+UTILITY: 10;
+
+FAILURE:
+    EXECUTE print "\n\nStack blocks failed!\n\n";
+}
+
+Plan: {
+NAME: "Clear a block"
+GOAL:
+    ACHIEVE CLEAR $OBJ;
+CONTEXT:
+    FACT ON $OBJ2 $OBJ;
+BODY:
+    EXECUTE print "Clearing " $OBJ2 " from on top of " $OBJ "\n";
+    EXECUTE print "Moving " $OBJ2 " to table.\n";
+    ACHIEVE ON $OBJ2 "Table";
+
+EFFECTS:
+    EXECUTE print "CLEAR: Retracting ON " $OBJ2 " " $OBJ "\n";
+    RETRACT ON $OBJ1 $OBJ;
+
+FAILURE:
+    EXECUTE print "\n\nClearing block " $OBJ " failed!\n\n";
+}
+
+Plan: {
+NAME: "Move a block onto another object"
+GOAL:
+    PERFORM move $OBJ1 $OBJ2;
+CONTEXT:
+    FACT CLEAR $OBJ1;
+    FACT CLEAR $OBJ2;
+BODY:
+    EXECUTE print "\n    Performing low-level move action of " $OBJ1 " to " $OBJ2 ".\n";
+
+EFFECTS:
+    WHEN : TEST (!= $OBJ2 "Table") {
+	EXECUTE print "    Retracting CLEAR " $OBJ2 "\n";
+	RETRACT CLEAR $OBJ2;
+    };
+    FACT ON $OBJ1 $OBJ3;
+    EXECUTE print "    move: Retracting ON " $OBJ1 " " $OBJ3 "\n";
+    RETRACT ON $OBJ1 $OBJ3;
+    EXECUTE print "    move: Asserting CLEAR " $OBJ3 "\n";
+    ASSERT CLEAR $OBJ3;
+    EXECUTE print "    move: Asserting ON " $OBJ1 " " $OBJ2 "\n\n";
+    ASSERT ON $OBJ1 $OBJ2;
+
+FAILURE:
+    EXECUTE print "\n\nMove failed!\n\n";
+}

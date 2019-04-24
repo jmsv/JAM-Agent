@@ -1,0 +1,13 @@
+erase *.class
+erase JAMParser.java
+erase JAMParserConstants.java
+erase JAMParserTokenManager.java
+erase ASCII_CharStream.java
+erase ParseException.java
+erase Token.java
+erase TokenMgrError.java
+cd primitives
+erase *.class
+cd ..\examples
+erase *.class
+cd ..

@@ -1,0 +1,137 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : test-idl.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test the JAM Interface Definition Language (IDL)
+//                      capabilities
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:44:28 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:42 2001
+//  Update Count      : 5
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+#JAMPARSER CHECK_IDL
+
+// IDL specification section
+IDL: GOAL	testing_done IN:String;
+IDL: PRIMITIVE	Result:Boolean CheckpointAgentToFile Out:ByteArray;
+IDL: PRIMITIVE	Result:Boolean connectToAgentAsClient IN:Int
+						      IN:String
+						      OUT:DataInputStream
+						      OUT:PrintWriter;
+
+/*
+  The parser needs to:
+      1. Read and store all IDL specifications
+      2. While reading through a plan,
+	 a. Keep track of all variables within the plan re: whether
+            they've been instantiated or not (i.e., add a flag to the
+	    Variable class)
+	 b. For each line in the plan, check the arguments to make sure
+	    they've been instantiated where they need to be, and mark
+	    arguments for potentially being instantiated when the IDL
+	    indicates Out or InOut.
+*/
+
+
+GOALS:
+    ACHIEVE testing_done "hello" :NOT-BY "Test 1" "Test 2";
+
+FACTS:
+    FACT test_done "False";
+    FACT count 0;
+    FACT communicated "a" 1 2.0;
+
+Plan: {
+NAME:
+	"Test 1"
+GOAL:
+	ACHIEVE testing_done $TEXT;
+PRECONDITION:
+	(! (FACT test_done "True"));
+CONTEXT:
+	RETRIEVE test_done $ABC;
+	RETRIEVE communicated $TEXT $INT $FLOAT;
+BODY:
+	EXECUTE print "11111111111111111111\n";
+	UPDATE (test_done) (test_done "True");
+UTILITY: -100;
+}
+
+Plan: {
+NAME:
+	"Test 2"
+GOAL:
+	ACHIEVE testing_done $TEXT;
+PRECONDITION:
+	(! (FACT test_done "True"));
+CONTEXT:
+	RETRIEVE test_done $ABC;
+	RETRIEVE communicated $TEXT $INT $FLOAT;
+BODY:
+	EXECUTE print "22222222222222222222222\n";
+	UPDATE (test_done) (test_done "True");
+UTILITY: -100;
+}
+
+Plan: {
+NAME:
+	"Test 3"
+GOAL:
+	ACHIEVE testing_done $TEXT;
+PRECONDITION:
+	(! (FACT test_done "True"));
+CONTEXT:
+	RETRIEVE test_done $ABC;
+	RETRIEVE communicated $TEXT $INT $FLOAT;
+BODY:
+	EXECUTE print "3333333333333333333333333333\n";
+	UPDATE (test_done) (test_done "True");
+UTILITY: -100;
+}
+
+Plan: {
+NAME:
+	"Test 4"
+GOAL:
+	ACHIEVE testing_done $TEXT;
+PRECONDITION:
+	(! (FACT test_done "True"));
+CONTEXT:
+	RETRIEVE test_done $ABC;
+	RETRIEVE communicated $TEXT $INT $FLOAT;
+BODY:
+	EXECUTE print "44444444444444444444444\n";
+	UPDATE (test_done) (test_done "True");
+UTILITY: 100;
+}

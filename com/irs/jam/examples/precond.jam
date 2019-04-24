@@ -1,0 +1,126 @@
+//  -*- Mode: Java -*-
+//////////////////////////////////////////////////////////////////////////////
+//  
+//  $Id$
+//  $Source$
+//  
+//  File              : ex9.jam
+//  Author(s)         : marcush <marcush@irs.home.com>
+//  
+//  Description       : Test/exercise JAM's plan precondition field
+//  
+//  Organization      : Intelligent Reasoning Systems
+//  Created On        : Thu Jul  1 06:45:43 1999
+//  Last Modified By  : <marcush@marcush.net>
+//  Last Modified On  : Sun Oct 28 14:58:43 2001
+//  Update Count      : 12
+//  
+//////////////////////////////////////////////////////////////////////////////
+//
+//  JAM agent architecture
+//
+//  Copyright (C) 1997-2001 Marcus J. Huber and Intelligent Reasoning Systems
+//  
+//  Permission is granted to copy and redistribute this software so long
+//  as no fee is charged, and so long as the copyright notice above, this
+//  grant of permission, and the disclaimer below appear in all copies
+//  made.  JAM may not be bundled, or sold alone or as part of another
+//  product, without permission.
+//  
+//  This software is provided as is, without representation as to its
+//  fitness for any purpose, and without warranty of any kind, either
+//  express or implied, including without limitation the implied
+//  warranties of merchantability and fitness for a particular purpose.
+//  Marcus J. Huber and Intelligent Reasoning Systems shall not be
+//  liable for any damages, including special, indirect, incidental, or
+//  consequential damages, with respect to any claim arising out of or
+//  in connection with the use of the software, even if they have been
+//  or are hereafter advised of the possibility of such damages.
+// 
+//////////////////////////////////////////////////////////////////////////////
+
+GOALS:
+    ACHIEVE precondition_test_done;
+    ACHIEVE effects_test_done;
+
+FACTS:
+    FACT precondition_test "True";
+    FACT effects_test "incomplete";
+    FACT context_test "True";
+    FACT cycle_num  0;
+    FACT initialized "False";
+
+OBSERVER:
+{
+    RETRIEVE cycle_num $CYCLE_NUM;
+    UPDATE (cycle_num) (cycle_num (+ 1 $CYCLE_NUM));
+
+    RETRIEVE initialized $VALUE;
+    WHEN : TEST (== $VALUE "False") {
+/*
+        EXECUTE setShowAPL 1;
+        EXECUTE setShowGoalList 1;
+	EXECUTE setShowWorldModel 1;
+	EXECUTE setShowIntentionStructure 1;
+*/
+	UPDATE (initialized) (initialized "True");
+    };
+
+    WHEN : TEST (== $CYCLE_NUM 20000)
+    {
+	EXECUTE print "\nRemoving \"locked up\" goal of 'ACHIEVE precondition_test_done;'\n";
+	EXECUTE print "This should allow the agent to continue and the agent\n";
+	EXECUTE print "should exit because it has no more goals to achieve.\n";
+	UNPOST ACHIEVE precondition_test_done;
+    };
+}
+
+Plan: {
+NAME:
+    "Test preconditions"
+GOAL:
+    ACHIEVE precondition_test_done;
+PRECONDITION:
+    FACT precondition_test "True";
+CONTEXT:
+    FACT context_test "True";
+BODY:
+    ASSIGN $VALUE 99;
+    EXECUTE print "Value = " $VALUE "\n";
+
+    // This shouldn't cause the plan to fail as it will
+    // only invalidate the precondition, which isn't evaluated
+    // once the plan is executing
+    UPDATE (precondition_test) (precondition_test "False");
+
+    ASSERT value $VALUE;
+    RETRIEVE value $NEWVALUE;
+    EXECUTE print "New Value = " $NEWVALUE;
+
+    EXECUTE println "\n\nThe next action in the plan will cause the plan to fail";
+    EXECUTE println "as it will invalidate this plan's context, which is evaluated";
+    EXECUTE println "while the plan is executing.  The agent should look like it";
+    EXECUTE println "\"locks up\" at this point since it has a goal but no longer";
+    EXECUTE println "has an applicable way of achieving that goal since the precondition.";
+    EXECUTE println "is no longer true.";
+    UPDATE (context_test) (context_test "False");
+
+    ASSERT test_wm "AAAA" 1.0 3;
+    EXECUTE printWorldModel;
+}
+
+
+Plan: {
+NAME:
+    "Test effects"
+GOAL:
+    ACHIEVE effects_test_done;
+BODY:
+    EXECUTE print "Executing EFFECTS plan.\n";
+
+UTILITY: 100;
+
+EFFECTS:
+    UPDATE (effects_test) (effects_test "complete");
+    EXECUTE printWorldModel;
+}
